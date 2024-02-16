@@ -42,6 +42,9 @@ function App() {
     window.electron.receive("auth-status", ({ isAuthenticated }) => {
       console.log("Auth status received !!!");
       setIsAuthenticated(isAuthenticated);
+      if (isAuthenticated) {
+        checkConnection();
+      }
     });
 
     window.electron.receive("registration-success", (data) => {
