@@ -1,0 +1,22 @@
+{
+  "manufacturer": "HP",
+  "model": "HP Pavilion Laptop 15-eh1xxx",
+  "version": "",
+  "serial": "25/07/2022",
+  "uuid": "302f3532-2f37-3032-3232-32302f372f32",
+  "sku": "4X7E8PA#ACJ",
+  "virtual": false,
+  "os": "e125360f-be2a-4661-801e-425f7b35e613",
+  "hardware": "302f3532-2f37-3032-3232-32302f372f32",
+  "macs": [
+    "00:15:5d:31:a1:f5",
+    "90:e8:68:f2:62:b7"
+  ],
+  "osInfo": {
+    "platform": "win32",
+    "type": "Windows_NT",
+    "arch": "x64",
+    "release": "10.0.22631",
+    "hostname": "SR71"
+  }
+}
