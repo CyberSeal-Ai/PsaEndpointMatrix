@@ -1,7 +1,6 @@
 // const { InfluxDB, Point } = require("@influxdata/influxdb-client");
 const si = require("systeminformation");
 const ping = require("ping");
-const SpeedTest = require("fast-speedtest-api");
 
 // require("dotenv").config({ path: "../.env" });
 
@@ -18,11 +17,6 @@ const SpeedTest = require("fast-speedtest-api");
 
 // const writeClient = influx.getWriteApi(org, bucket, "ns");
 
-const speedTest = new SpeedTest({
-  token: "YXNkZmFzZGxmbnNkYWZoYXNkZmhrYWxm", // required
-  maxTime: 5000, // Maximum test duration in milliseconds
-  pingCount: 10, // Number of pings to perform for packet loss calculation
-});
 
 async function calculatePacketLoss() {
   const host = "8.8.8.8";
@@ -80,7 +74,7 @@ async function getDynamicNetworkData() {
     // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
     const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
-    const downloadSpeed = await speedTest.getSpeed();
+    // const downloadSpeed = await speedTest.();
     const jitterAndLatency = await calculateJitterAndLatency();
     const packetLoss = (pingResult.packetLoss * 100) / pingResult.sent;
     const packetLossPercentage = await calculatePacketLoss();
@@ -97,7 +91,7 @@ async function getDynamicNetworkData() {
       tx_dropped: networkStats[0].tx_dropped || 0,
       tx_errors: networkStats[0].tx_errors || 0,
       jitter: jitterAndLatency.jitter,
-      downloadSpeed: downloadSpeed || 0,
+      downloadSpeed: networkStats[0].rx_sec || 0,
       packetLossPercentage: packetLossPercentage || 0,
     };
   } catch (error) {
