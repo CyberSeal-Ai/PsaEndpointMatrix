@@ -76,7 +76,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
   }
 };
 
-handleDynamicData = async (secretKey, clientId, Tenant_id) => {
+const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
   try {
     const dynamicRAMData = await getDynamicRAMData();
     const dynamicNetworkData = await getDynamicNetworkData();
