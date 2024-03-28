@@ -59,7 +59,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     console.log("Static data saved and sent to server.");
     console.log("Data to be sent:", body);
 
-    fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
+    fetch("https://20.197.2.222/backend/endpointMetrics/GetEndpointMetrics", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -99,7 +99,7 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
 
       console.log("Dynamic data saved and sent to server.");
 
-      fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
+      fetch("https://20.197.2.222/backend/endpointMetrics/GetEndpointMetrics", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

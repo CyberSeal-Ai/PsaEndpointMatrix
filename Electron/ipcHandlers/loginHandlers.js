@@ -22,7 +22,7 @@ const loginIPC = (mainWindow) => {
         tenantId: tenantId,
       }).toString();
 
-      const requestUrl = `http://localhost:5000/endpointMetrics/status?${queryParams}`;
+      const requestUrl = `https://20.197.2.222/backend/endpointMetrics/status?${queryParams}`;
 
       const request = net.request(requestUrl);
       request.on("response", (response) => {

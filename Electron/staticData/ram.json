@@ -1,5 +1,5 @@
 {
-  "bank": "P0 CHANNEL A",
+  "bank": "P0 CHANNEL A/0",
   "type": "DDR4",
   "clockSpeed": 3200,
   "formFactor": "SODIMM",

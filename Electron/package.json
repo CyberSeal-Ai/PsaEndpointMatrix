@@ -1,0 +1,23 @@
+{
+  "name": "electron-part",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . --overwrite --platform=win32 --arch=x64 --prune=true --out=release-builds"
+  },
+  "dependencies": {
+    "axios": "^1.6.7",
+    "battery-level": "^3.0.0",
+    "electron-store": "^8.1.0",
+    "fast-speedtest-api": "^0.3.2",
+    "fs": "^0.0.1-security",
+    "node-fetch": "^3.3.2",
+    "ping": "^0.4.4",
+    "systeminformation": "^5.21.24"
+  },
+  "devDependencies": {
+    "electron": "^28.2.2",
+    "electron-packager": "^15.3.0"
+  }
+}
