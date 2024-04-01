@@ -50,9 +50,7 @@ async function registerApplication(
   tenantId,
   webContents
 ) {
-  const apiUrl = new URL(
-    "https://20.197.2.222/backend/endpointMetrics/Register"
-  );
+  const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
   apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
   apiUrl.searchParams.append("MStoken", accessToken);
   apiUrl.searchParams.append("tenantid", tenantId);

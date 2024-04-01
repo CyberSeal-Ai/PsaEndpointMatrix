@@ -13,6 +13,8 @@ const {
 
 const { getDynamicNetworkData } = require("../dataMiners/network.js");
 
+const { getBatteryPercentage } = require("../dataMiners/battery");
+
 const {
   getStaticRAMData,
   saveStaticRAMData,
@@ -59,7 +61,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     console.log("Static data saved and sent to server.");
     console.log("Data to be sent:", body);
 
-    fetch("https://20.197.2.222/backend/endpointMetrics/GetEndpointMetrics", {
+    fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -81,11 +83,15 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
     const dynamicRAMData = await getDynamicRAMData();
     const dynamicNetworkData = await getDynamicNetworkData();
     const dynamicCPUData = await getDynamicCPUData();
+    const batteryPercentage = await getBatteryPercentage();
+    // const inBatteryMode = await monitorBatteryOnPower();
 
     dataCache.push({
       CPUdata: dynamicCPUData,
       NetworkData: dynamicNetworkData,
       RAMData: dynamicRAMData,
+      BatteryPercentage: batteryPercentage,
+      // InBatteryMode: inBatteryMode,
       timestamp: new Date(),
     });
 
@@ -99,7 +105,7 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
 
       console.log("Dynamic data saved and sent to server.");
 
-      fetch("https://20.197.2.222/backend/endpointMetrics/GetEndpointMetrics", {
+      fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
