@@ -15,6 +15,8 @@ const { getDynamicNetworkData } = require("../dataMiners/network.js");
 
 const { getBatteryPercentage } = require("../dataMiners/battery");
 
+const { checkWindowsVersion } = require("../dataMiners/windows");
+
 const {
   getStaticRAMData,
   saveStaticRAMData,
@@ -37,6 +39,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     saveSystemInfoToFile(systemInfo);
     const staticRAMData = await getStaticRAMData();
     saveStaticRAMData(staticRAMData);
+    const windowsUpdateData = await checkWindowsVersion();
 
     console.log("client id:", clientId);
     console.log("secret key:", secretKey);
@@ -46,6 +49,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
       CPUstaticData: staticData,
       RAMstaticData: staticRAMData,
       SystemInfo: systemInfo,
+      WindowsUpdateData: windowsUpdateData,
       timestamp: new Date(),
     });
 
@@ -83,15 +87,14 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
     const dynamicRAMData = await getDynamicRAMData();
     const dynamicNetworkData = await getDynamicNetworkData();
     const dynamicCPUData = await getDynamicCPUData();
-    const batteryPercentage = await getBatteryPercentage();
+    const batteryData = await getBatteryPercentage();
     // const inBatteryMode = await monitorBatteryOnPower();
 
     dataCache.push({
       CPUdata: dynamicCPUData,
       NetworkData: dynamicNetworkData,
       RAMData: dynamicRAMData,
-      BatteryPercentage: batteryPercentage,
-      // InBatteryMode: inBatteryMode,
+      BatteryPercentage: batteryData,
       timestamp: new Date(),
     });
 
