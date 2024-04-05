@@ -13,8 +13,6 @@ const {
 
 const { getDynamicNetworkData } = require("../dataMiners/network.js");
 
-const { getBatteryPercentage } = require("../dataMiners/battery");
-
 const {
   getStaticRAMData,
   saveStaticRAMData,
@@ -83,15 +81,13 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
     const dynamicRAMData = await getDynamicRAMData();
     const dynamicNetworkData = await getDynamicNetworkData();
     const dynamicCPUData = await getDynamicCPUData();
-    const batteryPercentage = await getBatteryPercentage();
+
     // const inBatteryMode = await monitorBatteryOnPower();
 
     dataCache.push({
       CPUdata: dynamicCPUData,
       NetworkData: dynamicNetworkData,
       RAMData: dynamicRAMData,
-      BatteryPercentage: batteryPercentage,
-      // InBatteryMode: inBatteryMode,
       timestamp: new Date(),
     });
 
