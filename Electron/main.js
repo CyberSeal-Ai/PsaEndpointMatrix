@@ -13,11 +13,12 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 600,
+    height: 400,
+    autoHideMenuBar: true,
+    // frame: false,
+    icon: path.join(__dirname, "./Icons/ss.ico"),
     webPreferences: {
-      // Note: __dirname will point to the Electron folder in development
-      // and to the resources path in production.
       preload: path.join(__dirname, "preload.js"),
       contextIsolation: true,
       nodeIntegration: false,

@@ -30,11 +30,11 @@ let dataCache = [];
 const handleStaticData = async (clientId, secretKey, Tenant_id) => {
   try {
     const staticData = await getStaticCPUData();
-    saveStaticCPUData(staticData);
+    // saveStaticCPUData(staticData);
     const systemInfo = await getSystemInfo();
-    saveSystemInfoToFile(systemInfo);
+    // saveSystemInfoToFile(systemInfo);
     const staticRAMData = await getStaticRAMData();
-    saveStaticRAMData(staticRAMData);
+    // saveStaticRAMData(staticRAMData);
 
     console.log("client id:", clientId);
     console.log("secret key:", secretKey);
@@ -59,13 +59,16 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     console.log("Static data saved and sent to server.");
     console.log("Data to be sent:", body);
 
-    fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    })
+    fetch(
+      "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body,
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         dataCache = [];
@@ -101,13 +104,16 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
 
       console.log("Dynamic data saved and sent to server.");
 
-      fetch("http://localhost:5000/endpointMetrics/GetEndpointMetrics", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      })
+      fetch(
+        "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body,
+        }
+      )
         .then((response) => console.log(response))
         .then((data) => {
           dataCache = [];
