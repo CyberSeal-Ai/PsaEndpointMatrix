@@ -1,6 +1,7 @@
 // const { InfluxDB, Point } = require("@influxdata/influxdb-client");
 const si = require("systeminformation");
 const ping = require("ping");
+const Traceroute = require('nodejs-traceroute');
 
 // require("dotenv").config({ path: "../.env" });
 
@@ -71,7 +72,6 @@ async function getDynamicNetworkData() {
     const Interfaces = await si.networkInterfaces("default");
     const systemInfo = await si.system();
     const uuid = systemInfo.uuid;
-    // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
     const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
     // const downloadSpeed = await speedTest.();
@@ -79,25 +79,47 @@ async function getDynamicNetworkData() {
     const packetLoss = (pingResult.packetLoss * 100) / pingResult.sent;
     const packetLossPercentage = await calculatePacketLoss();
 
-    return {
-      Interfaces: Interfaces,
-      inetLatency: inetLatency,
-      uuid: uuid,
-      iface: networkStats[0].iface,
-      rx_bytes: networkStats[0].rx_bytes || 0,
-      rx_dropped: networkStats[0].rx_dropped || 0,
-      rx_errors: networkStats[0].rx_errors || 0,
-      tx_bytes: networkStats[0].tx_bytes || 0,
-      tx_dropped: networkStats[0].tx_dropped || 0,
-      tx_errors: networkStats[0].tx_errors || 0,
-      jitter: jitterAndLatency.jitter,
-      downloadSpeed: networkStats[0].rx_sec || 0,
-      packetLossPercentage: packetLossPercentage || 0,
-    };
+
+    // return {
+    //   Interfaces: Interfaces,
+    //   inetLatency: inetLatency,
+    //   uuid: uuid,
+    //   networkStats: networkStats,
+    //   iface: networkStats[0].iface,
+    //   rx_bytes: networkStats[0].rx_bytes || 0,
+    //   rx_dropped: networkStats[0].rx_dropped || 0,
+    //   rx_errors: networkStats[0].rx_errors || 0,
+    //   tx_bytes: networkStats[0].tx_bytes || 0,
+    //   tx_dropped: networkStats[0].tx_dropped || 0,
+    //   tx_errors: networkStats[0].tx_errors || 0,
+    //   jitter: jitterAndLatency.jitter,
+    //   downloadSpeed: networkStats[0].rx_sec || 0,
+    //   packetLossPercentage: packetLossPercentage || 0,
+    // };
   } catch (error) {
     console.error("Error collecting dynamic network data:", error);
-    return null;
   }
+
+  try {
+    const tracer = new Traceroute();
+    tracer
+        .on('pid', (pid) => {
+            console.log(`pid: ${pid}`);
+        })
+        .on('destination', (destination) => {
+            console.log(`destination: ${destination}`);
+        })
+        .on('hop', (hop) => {
+            console.log(`hop: ${JSON.stringify(hop)}`);
+        })
+        .on('close', (code) => {
+            console.log(`close: code ${code}`);
+        });
+
+    tracer.trace('github.com');
+} catch (ex) {
+    console.log(ex);
+}
 }
 
 // function logDynamicNetworkData(dynamicData) {
