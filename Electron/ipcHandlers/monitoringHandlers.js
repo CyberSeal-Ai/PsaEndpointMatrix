@@ -57,7 +57,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     const isStatic = "1";
 
     console.log("Static data saved and sent to server.");
-    console.log("Data to be sent:", body);
+    // console.log("Data to be sent:", body);
 
     fetch(
       "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",

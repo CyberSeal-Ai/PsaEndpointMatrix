@@ -2,6 +2,8 @@
 const si = require("systeminformation");
 const ping = require("ping");
 const Traceroute = require('nodejs-traceroute');
+const {exec} = require('child_process');
+const https = require('https');
 
 // require("dotenv").config({ path: "../.env" });
 
@@ -80,46 +82,62 @@ async function getDynamicNetworkData() {
     const packetLossPercentage = await calculatePacketLoss();
 
 
-    // return {
-    //   Interfaces: Interfaces,
-    //   inetLatency: inetLatency,
-    //   uuid: uuid,
-    //   networkStats: networkStats,
-    //   iface: networkStats[0].iface,
-    //   rx_bytes: networkStats[0].rx_bytes || 0,
-    //   rx_dropped: networkStats[0].rx_dropped || 0,
-    //   rx_errors: networkStats[0].rx_errors || 0,
-    //   tx_bytes: networkStats[0].tx_bytes || 0,
-    //   tx_dropped: networkStats[0].tx_dropped || 0,
-    //   tx_errors: networkStats[0].tx_errors || 0,
-    //   jitter: jitterAndLatency.jitter,
-    //   downloadSpeed: networkStats[0].rx_sec || 0,
-    //   packetLossPercentage: packetLossPercentage || 0,
-    // };
+    return {
+      Interfaces: Interfaces,
+      inetLatency: inetLatency,
+      uuid: uuid,
+      networkStats: networkStats,
+      iface: networkStats[0].iface,
+      rx_bytes: networkStats[0].rx_bytes || 0,
+      rx_dropped: networkStats[0].rx_dropped || 0,
+      rx_errors: networkStats[0].rx_errors || 0,
+      tx_bytes: networkStats[0].tx_bytes || 0,
+      tx_dropped: networkStats[0].tx_dropped || 0,
+      tx_errors: networkStats[0].tx_errors || 0,
+      jitter: jitterAndLatency.jitter,
+      downloadSpeed: networkStats[0].rx_sec || 0,
+      packetLossPercentage: packetLossPercentage || 0,
+    };
   } catch (error) {
     console.error("Error collecting dynamic network data:", error);
   }
 
   try {
-    const tracer = new Traceroute();
-    tracer
-        .on('pid', (pid) => {
-            console.log(`pid: ${pid}`);
-        })
-        .on('destination', (destination) => {
-            console.log(`destination: ${destination}`);
-        })
-        .on('hop', (hop) => {
-            console.log(`hop: ${JSON.stringify(hop)}`);
-        })
-        .on('close', (code) => {
-            console.log(`close: code ${code}`);
-        });
-
-    tracer.trace('github.com');
+   exec('tracert -4 8.8.8.8', (err, stdout, stderr) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(stdout, "stdout");
+   })
 } catch (ex) {
     console.log(ex);
 }
+}
+
+try {
+  const ipToken = '2d39a2ec2fdbb4';
+  https.get(`https://ipinfo.io?token=${ipToken}`, (resp) => {
+  let data = '';
+
+  // A chunk of data has been received.
+  resp.on('data', (chunk) => {
+    data += chunk;
+  });
+
+  // The whole response has been received.
+  resp.on('end', () => {
+    const ipInfo = JSON.parse(data);
+    console.log(`Your IP: ${ipInfo.ip}`);
+    console.log(`Your ISP: ${ipInfo.org}`);
+    console.log(`Network Data: ${data}`);
+  });
+
+}).on("error", (err) => {
+  console.log("Error: " + err.message);
+});
+} catch (error) {
+  console.error(error);
 }
 
 // function logDynamicNetworkData(dynamicData) {
