@@ -11,6 +11,11 @@ const {
   saveSystemInfoToFile,
 } = require("../dataMiners/system.js");
 
+const {
+  getBatteryPercentage,
+  monitorBatteryOnPower,
+} = require("../dataMiners/battery.js");
+
 const { getDynamicNetworkData } = require("../dataMiners/network.js");
 
 const {
@@ -34,7 +39,6 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     const systemInfo = await getSystemInfo();
     // saveSystemInfoToFile(systemInfo);
     const staticRAMData = await getStaticRAMData();
-    // saveStaticRAMData(staticRAMData);
 
     console.log("client id:", clientId);
     console.log("secret key:", secretKey);
@@ -44,6 +48,7 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
       CPUstaticData: staticData,
       RAMstaticData: staticRAMData,
       SystemInfo: systemInfo,
+
       timestamp: new Date(),
     });
 
@@ -57,7 +62,6 @@ const handleStaticData = async (clientId, secretKey, Tenant_id) => {
     const isStatic = "1";
 
     console.log("Static data saved and sent to server.");
-    // console.log("Data to be sent:", body);
 
     fetch(
       "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",
@@ -84,13 +88,18 @@ const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
     const dynamicRAMData = await getDynamicRAMData();
     const dynamicNetworkData = await getDynamicNetworkData();
     const dynamicCPUData = await getDynamicCPUData();
+    const battery = await getBatteryPercentage();
+    const onBatteryPower = await monitorBatteryOnPower();
 
-    // const inBatteryMode = await monitorBatteryOnPower();
+    console.log("Battery Percentage:", battery);
+    console.log("Battery Power:", onBatteryPower);
 
     dataCache.push({
       CPUdata: dynamicCPUData,
       NetworkData: dynamicNetworkData,
       RAMData: dynamicRAMData,
+      BatteryPercentage: battery,
+      BatteryPower: onBatteryPower,
       timestamp: new Date(),
     });
 
