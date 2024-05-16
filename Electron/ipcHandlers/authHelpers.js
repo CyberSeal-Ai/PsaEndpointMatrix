@@ -104,6 +104,7 @@ async function exchangeCodeForTokens(code, webContents) {
       await fetchUserDetails(access_token);
 
       // Register the application with your local server
+      store.set("bearerToken", access_token);
       const tenantId = store.get("tenantId");
       const userDetails = store.get("userDetails");
       if (tenantId && userDetails) {

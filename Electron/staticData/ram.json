@@ -1,13 +1,13 @@
 {
   "bank": "P0 CHANNEL A/0",
   "type": "DDR4",
-  "clockSpeed": 3200,
+  "clockSpeed": 2667,
   "formFactor": "SODIMM",
   "manufacturer": "Hynix",
-  "partNum": "HMA81GS6DJR8N-XN",
-  "serialNum": "74EB0119",
+  "partNum": "HMA82GS6JJR8N-VK",
+  "serialNum": "2E3A918C",
   "voltageConfigured": 1.2,
   "voltageMin": 1.2,
   "voltageMax": 1.2,
-  "size": 8589934592
+  "size": 17179869184
 }

@@ -8,6 +8,7 @@ const store = new Store();
 
 const { loginIPC } = require("./ipcHandlers/loginHandlers.js");
 const { monitorIPC } = require("./ipcHandlers/monitoringHandlers.js");
+const {monitorCall} = require("./ipcHandlers/callHandler.js");
 
 let mainWindow;
 
@@ -51,6 +52,7 @@ app.whenReady().then(() => {
 
   loginIPC(mainWindow);
   monitorIPC(mainWindow);
+  monitorCall(mainWindow);
 });
 
 app.on("window-all-closed", () => {

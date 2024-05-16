@@ -10,6 +10,7 @@ contextBridge.exposeInMainWorld("electron", {
       "sign-out",
       "start-monitoring",
       "stop-monitoring",
+      "call-monitor"
     ];
     if (validChannels.includes(channel)) {
       ipcRenderer.send(channel, data);

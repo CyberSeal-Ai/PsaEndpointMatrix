@@ -79,6 +79,10 @@ function App() {
     setMonitoringStatus(false);
   };
 
+  const handleCallMonitor = () => {
+    window.electron.send("call-monitor");
+  }
+
   const handleSignOut = () => {
     window.electron.send("sign-out");
     handleStopMonitoring();
@@ -128,6 +132,10 @@ function App() {
                 Force Connect
               </Button>
             )}
+
+            <Button variant="outlined" color="info" onClick={handleCallMonitor}>
+              Call Monitor
+            </Button>
 
             <Button variant="outlined" color="warning" onClick={handleSignOut}>
               Sign Out
