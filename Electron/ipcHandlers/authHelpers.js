@@ -5,6 +5,38 @@ const store = new Store();
 const axios = require("axios");
 const path = require("path");
 
+async function connectWebSocket() {
+  // Retrieve stored appId and clientSecret
+  const appId = store.get("appId");
+  const clientSecret = store.get("clientSecret");
+
+  if (!appId || !clientSecret) {
+    console.error(
+      "Missing appId or clientSecret. Please register the application first."
+    );
+    return;
+  }
+
+  const wsUrl = `ws://localhost:5000/ws/endpoint_metrics`;
+
+  const ws = new WebSocket(wsUrl);
+
+  ws.on("open", function open() {
+    console.log("WebSocket connection established");
+    // Send appId and clientSecret as the first message
+    ws.send(JSON.stringify({ app_id: appId, app_secret: clientSecret }));
+  });
+
+  ws.on("message", function incoming(data) {
+    console.log("Received:", data);
+    // Handle incoming messages
+  });
+
+  ws.on("error", function error(err) {
+    console.error("WebSocket error:", err);
+  });
+}
+
 async function fetchTenantId(accessToken) {
   try {
     const response = await axios.get(
@@ -50,9 +82,7 @@ async function registerApplication(
   tenantId,
   webContents
 ) {
-  const apiUrl = new URL(
-    "https://demo.cybersealai.com/backend/endpointMetrics/Register"
-  );
+  const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
   apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
   apiUrl.searchParams.append("MStoken", accessToken);
   apiUrl.searchParams.append("tenantid", tenantId);

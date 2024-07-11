@@ -7,9 +7,6 @@ const path = require("path");
 const { exchangeCodeForTokens } = require("./authHelpers");
 
 const loginIPC = (mainWindow) => {
-  // The below ipc is to continously ping the PSA for connection status.
-  // The timing of the same is controlled by the React application that sends the ipc
-
   ipcMain.handle("check-connection", async () => {
     const clientId = store.get("appId");
     const secretKey = store.get("clientSecret");
@@ -22,7 +19,7 @@ const loginIPC = (mainWindow) => {
         tenantId: tenantId,
       }).toString();
 
-      const requestUrl = `https://demo.cybersealai.com/backend/endpointMetrics/status?${queryParams}`;
+      const requestUrl = `http://localhost:5000/endpointMetrics/status?${queryParams}`;
 
       const request = net.request(requestUrl);
       request.on("response", (response) => {
@@ -35,8 +32,6 @@ const loginIPC = (mainWindow) => {
       request.end();
     });
   });
-
-  // This ipc checks if the User is already authenticated or not
 
   ipcMain.on("check-auth", (event) => {
     const clientId = store.get("appId");

@@ -1,156 +1,178 @@
-const { app, BrowserWindow, ipcMain, net } = require("electron");
-const {
-  getStaticCPUData,
-  getDynamicCPUData,
-  saveStaticCPUData,
-  setApp,
-} = require("../dataMiners/cpu.js");
-
-const {
-  getSystemInfo,
-  saveSystemInfoToFile,
-} = require("../dataMiners/system.js");
-
+const { ipcMain } = require("electron");
+const { getStaticCPUData, getDynamicCPUData } = require("../dataMiners/cpu.js");
+const { getSystemInfo } = require("../dataMiners/system.js");
 const { getDynamicNetworkData } = require("../dataMiners/network.js");
-
-const {
-  getStaticRAMData,
-  saveStaticRAMData,
-  getDynamicRAMData,
-} = require("../dataMiners/ram.js");
+const { getStaticRAMData, getDynamicRAMData } = require("../dataMiners/ram.js");
+const WebSocket = require("ws");
 
 const Store = require("electron-store");
 const store = new Store();
-const querystring = require("querystring");
-const axios = require("axios");
-const path = require("path");
 
-let dataCache = [];
+const appID = store.get("appId");
+const secret = store.get("clientSecret");
 
-const handleStaticData = async (clientId, secretKey, Tenant_id) => {
-  try {
-    const staticData = await getStaticCPUData();
-    // saveStaticCPUData(staticData);
-    const systemInfo = await getSystemInfo();
-    // saveSystemInfoToFile(systemInfo);
-    const staticRAMData = await getStaticRAMData();
-    // saveStaticRAMData(staticRAMData);
+const PouchDB = require("pouchdb");
+const db = new PouchDB("system_data");
 
-    console.log("client id:", clientId);
-    console.log("secret key:", secretKey);
-    console.log("tenant id:", Tenant_id);
+const wss = new WebSocket.Server({
+  port: 8080,
+  verifyClient: (info, done) => {
+    const origin = info.origin;
+    console.log(`Origin: ${origin}`);
+    // Allow all origins for now, or you can implement your own logic to restrict origins
+    done(true);
+  },
+});
 
-    dataCache.push({
-      CPUstaticData: staticData,
-      RAMstaticData: staticRAMData,
-      SystemInfo: systemInfo,
-      timestamp: new Date(),
-    });
+wss.on("listening", () => {
+  console.log(`WebSocket server is listening on port ${wss.options.port}`);
+});
 
-    const body = JSON.stringify({
-      dataCache,
-      clientId: clientId,
-      secretKey: secretKey,
-      Tenant_id: Tenant_id,
-    });
-
-    const isStatic = "1";
-
-    console.log("Static data saved and sent to server.");
-    console.log("Data to be sent:", body);
-
-    fetch(
-      "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        dataCache = [];
-      })
-      .catch((error) => console.error("Error:", error));
-  } catch (error) {
-    console.error("Failed to get or save static CPU data:", error);
-  }
-};
-
-const handleDynamicData = async (secretKey, clientId, Tenant_id) => {
-  try {
-    const dynamicRAMData = await getDynamicRAMData();
-    const dynamicNetworkData = await getDynamicNetworkData();
-    const dynamicCPUData = await getDynamicCPUData();
-
-    // const inBatteryMode = await monitorBatteryOnPower();
-
-    dataCache.push({
-      CPUdata: dynamicCPUData,
-      NetworkData: dynamicNetworkData,
-      RAMData: dynamicRAMData,
-      timestamp: new Date(),
-    });
-
-    if (dataCache.length >= 6) {
-      const body = JSON.stringify({
-        dataCache,
-        secretKey,
-        clientId,
-        Tenant_id,
-      });
-
-      console.log("Dynamic data saved and sent to server.");
-
-      fetch(
-        "https://demo.cybersealai.com/backend/endpointMetrics/GetEndpointMetrics",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body,
-        }
-      )
-        .then((response) => console.log(response))
-        .then((data) => {
-          dataCache = [];
-        })
-        .catch((error) => console.error("Error:", error));
+wss.on("connection", function connection(ws) {
+  console.log("WebSocket connection established");
+  ws.on("message", async function incoming(message) {
+    console.log("received: %s", message);
+    let parsedMessage;
+    try {
+      parsedMessage = JSON.parse(message);
+    } catch (e) {
+      ws.send(JSON.stringify({ error: "Invalid JSON" }));
+      console.error("Invalid JSON received: " + message);
+      return;
     }
+
+    // Check for appID and secret
+    if (parsedMessage.appID === appID && parsedMessage.secret === secret) {
+      // Handle different data requests
+      switch (parsedMessage.type) {
+        case "requestData":
+          try {
+            // Fetch data from local DB and send
+            const data = await fetchDataFromDB(); // Implement your actual data fetching logic here
+            ws.send(JSON.stringify({ status: "success", data: data }));
+            console.log("Data sent successfully");
+          } catch (error) {
+            ws.send(
+              JSON.stringify({
+                error: "Failed to fetch data: " + error.message,
+              })
+            );
+            console.error("Failed to fetch data: " + error.message);
+          }
+          break;
+        default:
+          ws.send(JSON.stringify({ error: "Unknown request type" }));
+          console.error("Unknown request type: " + parsedMessage.type);
+      }
+    } else {
+      ws.send(JSON.stringify({ error: "Authentication failed" }));
+      console.error("Authentication failed for appID: " + parsedMessage.appID);
+    }
+  });
+});
+
+const handleStaticData = async () => {
+  try {
+    const staticCPUData = await getStaticCPUData();
+    const staticCPUDataDoc = {
+      _id: `static_cpu_${Date.now()}`,
+      type: "static_cpu",
+      data: staticCPUData,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(staticCPUDataDoc);
+
+    const systemInfo = await getSystemInfo();
+    const systemInfoDoc = {
+      _id: `system_info_${Date.now()}`,
+      type: "system_info",
+      data: systemInfo,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(systemInfoDoc);
+
+    const staticRAMData = await getStaticRAMData();
+    const staticRAMDataDoc = {
+      _id: `static_ram_${Date.now()}`,
+      type: "static_ram",
+      data: staticRAMData,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(staticRAMDataDoc);
+
+    console.log("Static data saved successfully.");
   } catch (error) {
-    console.error("Failed to get dynamic data:", error);
+    console.error("Failed to handle static data:", error);
   }
 };
 
-const monitorIPC = (mainWindow) => {
+const handleDynamicData = async () => {
+  try {
+    const dynamicCPUData = await getDynamicCPUData();
+    const dynamicCPUDataDoc = {
+      _id: `dynamic_cpu_${Date.now()}`,
+      type: "dynamic_cpu",
+      data: dynamicCPUData,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(dynamicCPUDataDoc);
+
+    const dynamicRAMData = await getDynamicRAMData();
+    const dynamicRAMDataDoc = {
+      _id: `dynamic_ram_${Date.now()}`,
+      type: "dynamic_ram",
+      data: dynamicRAMData,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(dynamicRAMDataDoc);
+
+    const dynamicNetworkData = await getDynamicNetworkData();
+    const dynamicNetworkDataDoc = {
+      _id: `dynamic_network_${Date.now()}`,
+      type: "dynamic_network",
+      data: dynamicNetworkData,
+      timestamp: new Date().toISOString(),
+    };
+    await db.put(dynamicNetworkDataDoc);
+
+    console.log("Dynamic data saved successfully.");
+  } catch (error) {
+    console.error("Failed to handle dynamic data:", error);
+  }
+};
+
+const displayCollections = async () => {
+  try {
+    const result = await db.allDocs({ include_docs: true });
+
+    console.log("All documents in the database:");
+    result.rows.forEach((row) => {
+      console.log(row.doc);
+    });
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+  }
+};
+
+const monitorIPC = () => {
   let dynamicDataInterval;
   let staticDataInterval;
 
-  ipcMain.on("start-monitoring", async (event) => {
+  ipcMain.on("start-monitoring", async () => {
     console.log("Start monitoring data:");
-    const clientId = await store.get("appId");
-    const secretKey = await store.get("clientSecret");
-    const Tenant_id = await store.get("tenantId");
-
-    console.log("Client ID:", clientId);
-    console.log("Secret Key:", secretKey);
-    console.log("Tenant ID:", Tenant_id);
 
     if (!dynamicDataInterval) {
       dynamicDataInterval = setInterval(async () => {
-        handleDynamicData(secretKey, clientId, Tenant_id);
+        await handleDynamicData();
       }, 15000);
     }
 
-    handleStaticData(clientId, secretKey, Tenant_id);
+    await handleStaticData();
 
     if (!staticDataInterval) {
       staticDataInterval = setInterval(async () => {
-        handleStaticData(clientId, secretKey, Tenant_id);
-      }, 3600000);
+        await handleStaticData();
+      }, 10 * 60 * 1000);
     }
   });
 

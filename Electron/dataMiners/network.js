@@ -1,22 +1,5 @@
-// const { InfluxDB, Point } = require("@influxdata/influxdb-client");
 const si = require("systeminformation");
 const ping = require("ping");
-
-// require("dotenv").config({ path: "../.env" });
-
-// const token =
-//   "6KozKP130beZY366OUum4YM7Hxm4HTQ2lvZHEsHHND3foo84PG8zTmlniqgzaezMyufT6RGTtPcRBpaA9OIiOQ==";
-// const url = "http://localhost:8086";
-// const org = "CYBERSEAL";
-// const bucket = "NETWORK_LOGS";
-
-// const influx = new InfluxDB({
-//   url,
-//   token,
-// });
-
-// const writeClient = influx.getWriteApi(org, bucket, "ns");
-
 
 async function calculatePacketLoss() {
   const host = "8.8.8.8";
@@ -59,9 +42,6 @@ async function calculateJitterAndLatency() {
   const latencyAverage =
     latencyValues.length > 0 ? latencySum / latencyValues.length : 0;
 
-  // console.log("Jitter:", jitterAverage);
-  // console.log("Latency:", latencyAverage);
-
   return { jitter: jitterAverage || 0, latency: latencyAverage || 0 };
 }
 
@@ -71,12 +51,9 @@ async function getDynamicNetworkData() {
     const Interfaces = await si.networkInterfaces("default");
     const systemInfo = await si.system();
     const uuid = systemInfo.uuid;
-    // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
     const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
-    // const downloadSpeed = await speedTest.();
     const jitterAndLatency = await calculateJitterAndLatency();
-    const packetLoss = (pingResult.packetLoss * 100) / pingResult.sent;
     const packetLossPercentage = await calculatePacketLoss();
 
     return {
@@ -100,30 +77,6 @@ async function getDynamicNetworkData() {
   }
 }
 
-// function logDynamicNetworkData(dynamicData) {
-//   if (dynamicData === null) {
-//     console.error("Dynamic network data is null");
-//     return;
-//   }
-
-//   const networkDataPoint = new Point("network_data")
-//     .tag("iface", dynamicData.iface || "unknown")
-//     .floatField("rx_bytes", dynamicData.rx_bytes || 0)
-//     .floatField("rx_dropped", dynamicData.rx_dropped || 0)
-//     .floatField("rx_errors", dynamicData.rx_errors || 0)
-//     .floatField("tx_bytes", dynamicData.tx_bytes || 0)
-//     .floatField("tx_dropped", dynamicData.tx_dropped || 0)
-//     .floatField("tx_errors", dynamicData.tx_errors || 0)
-//     .floatField("inetLatency", dynamicData.inetLatency || 0)
-//     .floatField("jitter", dynamicData.jitter || 0)
-//     .floatField("downloadSpeed", dynamicData.downloadSpeed || 0)
-//     .floatField("packetLossPercentage", dynamicData.packetLossPercentage || 0);
-
-//   writeClient.writePoint(networkDataPoint);
-//   writeClient.flush();
-// }
-
 module.exports = {
   getDynamicNetworkData,
-  //   logDynamicNetworkData,
 };
