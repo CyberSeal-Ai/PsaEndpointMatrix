@@ -1,41 +1,10 @@
-const { app, BrowserWindow, ipcMain, net } = require("electron");
+const { app, BrowserWindow, ipcMain, net, ipcRenderer } = require("electron");
+const WebSocketManager = require("./socketsHandler");
 const querystring = require("querystring");
 const Store = require("electron-store");
 const store = new Store();
 const axios = require("axios");
 const path = require("path");
-
-async function connectWebSocket() {
-  // Retrieve stored appId and clientSecret
-  const appId = store.get("appId");
-  const clientSecret = store.get("clientSecret");
-
-  if (!appId || !clientSecret) {
-    console.error(
-      "Missing appId or clientSecret. Please register the application first."
-    );
-    return;
-  }
-
-  const wsUrl = `ws://localhost:5000/ws/endpoint_metrics`;
-
-  const ws = new WebSocket(wsUrl);
-
-  ws.on("open", function open() {
-    console.log("WebSocket connection established");
-    // Send appId and clientSecret as the first message
-    ws.send(JSON.stringify({ app_id: appId, app_secret: clientSecret }));
-  });
-
-  ws.on("message", function incoming(data) {
-    console.log("Received:", data);
-    // Handle incoming messages
-  });
-
-  ws.on("error", function error(err) {
-    console.error("WebSocket error:", err);
-  });
-}
 
 async function fetchTenantId(accessToken) {
   try {
@@ -68,7 +37,8 @@ async function fetchUserDetails(accessToken) {
 
     if (response.data) {
       const { displayName, id: userId, userPrincipalName } = response.data;
-      store.set("userDetails", { displayName, userId, userPrincipalName }); // Store user details securely
+      store.set("userDetails", { displayName, userId, userPrincipalName });
+      store.set("userPrincipalName", userPrincipalName); // Store the user's email address
       console.log("User Details:", { displayName, userId, userPrincipalName });
     }
   } catch (error) {
@@ -95,7 +65,6 @@ async function registerApplication(
 
     const data = await response.json();
     if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
-      // Store the appId and clientSecret in the Electron store
       store.set("appId", data.Data.appId);
       store.set("clientSecret", data.Data.clientSecret);
 
@@ -105,6 +74,13 @@ async function registerApplication(
         appId: data.Data.appId,
         clientSecret: data.Data.clientSecret,
       });
+
+      // Establish WebSocket connection
+      const webSocketManager = new WebSocketManager(
+        "ws://localhost:5000/ws/endpointMetrics/",
+        data.Data.appId,
+        data.Data.clientSecret
+      );
     }
   } catch (error) {
     console.error("Error registering application:", error);

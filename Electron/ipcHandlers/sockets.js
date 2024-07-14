@@ -1,42 +1,505 @@
-const WebSocket = require("ws");
-const querystring = require("querystring");
-const Store = require("electron-store");
-const store = new Store();
-const axios = require("axios");
+const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const { DateTime } = require("luxon");
 
-async function connectWebSocket() {
-  // Retrieve stored appId and clientSecret
-  const appId = store.get("appId");
-  const clientSecret = store.get("clientSecret");
+const dbPath = path.join(__dirname, "system_data.db");
+const db = new sqlite3.Database(dbPath);
 
-  if (!appId || !clientSecret) {
-    console.error(
-      "Missing appId or clientSecret. Please register the application first."
-    );
-    return;
+async function getStaticCPUDetails() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM static_cpu ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const cpuDetails = {
+      Model: mostRecentEntry.model,
+      ManufacturerCPU: mostRecentEntry.manufacturer,
+      Brand: mostRecentEntry.brand,
+      CPUModel: mostRecentEntry.model,
+      Speed: mostRecentEntry.speed,
+      Cores: mostRecentEntry.cores,
+      PhysicalCores: mostRecentEntry.physicalCores,
+      ProcessorsCount: mostRecentEntry.processors,
+    };
+
+    return cpuDetails;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
   }
-
-  const wsUrl = `ws://localhost:5000/ws/endpoint_metrics`;
-
-  const ws = new WebSocket(wsUrl);
-
-  ws.on("open", function open() {
-    console.log("WebSocket connection established");
-    // Send appId and clientSecret as the first message
-    ws.send(JSON.stringify({ app_id: appId, app_secret: clientSecret }));
-  });
-
-  ws.on("message", function incoming(data) {
-    console.log("Received:", data);
-    // Handle incoming messages
-  });
-
-  ws.on("error", function error(err) {
-    console.error("WebSocket error:", err);
-  });
 }
 
-ipcRenderer.on("registration-success", (event) => {
-  connectWebSocket();
-});
+async function getCurrentLoadData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_cpu ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          AVG(currentLoad) AS currentLoad
+        FROM dynamic_cpu
+        WHERE timestamp >= ?
+        GROUP BY bucketKey
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const currentLoadData = results.map((result) => ({
+      CurrentLoad: result.currentLoad.toFixed(2),
+      Timestamp: result.bucketKey,
+    }));
+
+    return currentLoadData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getMemoryUsageData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_ram ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          AVG(total) AS totalMemory,
+          AVG(used) AS usedMemory,
+          AVG(free) AS freeMemory
+        FROM dynamic_ram
+        WHERE timestamp >= ?
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const memoryUsageData = results.map((result) => ({
+      TotalUsed: (result.totalMemory / (1024 * 1024 * 1024)).toFixed(2),
+      FreeSpace: (result.freeMemory / (1024 * 1024 * 1024)).toFixed(2),
+      UsedSpace: (result.usedMemory / (1024 * 1024 * 1024)).toFixed(2),
+      Timestamp: result.bucketKey,
+    }));
+
+    return memoryUsageData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getNetworkTrafficData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_network ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          SUM(tx_bytes) AS txBytes,
+          SUM(rx_bytes) AS rxBytes
+        FROM dynamic_network
+        WHERE timestamp >= ?
+        GROUP BY bucketKey
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const trafficData = results.map((result) => ({
+      TxBytes: result.txBytes,
+      RxBytes: result.rxBytes,
+      Timestamp: result.bucketKey,
+    }));
+
+    return trafficData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getDownloadSpeedData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_network ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:00:00', timestamp) AS hourlyBucket,
+          AVG(downloadSpeed) / 12500 AS averageDownloadSpeed
+        FROM dynamic_network
+        WHERE timestamp >= ?
+        GROUP BY hourlyBucket
+        ORDER BY hourlyBucket
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const downloadSpeedData = results.map((result) => ({
+      AverageDownloadSpeed: result.averageDownloadSpeed.toFixed(2),
+      Timestamp: result.hourlyBucket,
+    }));
+
+    return downloadSpeedData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getPacketLossPercentageData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_network ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          AVG(packetLossPercentage) AS packetLossPercentage
+        FROM dynamic_network
+        WHERE timestamp >= ?
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const packetLossData = results.map((result) => ({
+      PacketLossPercentage: result.packetLossPercentage.toFixed(2),
+      Timestamp: result.bucketKey,
+    }));
+
+    return packetLossData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getJitterData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_network ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          AVG(jitter) AS jitter
+        FROM dynamic_network
+        WHERE timestamp >= ?
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const jitterData = results.map((result) => ({
+      Jitter: result.jitter.toFixed(2),
+      Timestamp: result.bucketKey,
+    }));
+
+    return jitterData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getLatencyData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT * FROM dynamic_network ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const mostRecentTimestamp = DateTime.fromISO(mostRecentEntry.timestamp);
+    const twelveHoursBeforeMostRecent = mostRecentTimestamp.minus({
+      hours: 12,
+    });
+
+    const results = await new Promise((resolve, reject) => {
+      const query = `
+        SELECT 
+          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
+          AVG(inetLatency) AS latency
+        FROM dynamic_network
+        WHERE timestamp >= ?
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
+        ORDER BY bucketKey
+      `;
+      db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(rows);
+      });
+    });
+
+    const latencyData = results.map((result) => ({
+      Latency: result.latency.toFixed(2),
+      Timestamp: result.bucketKey,
+    }));
+
+    return latencyData;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getSystemInfo() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT macs, osInfo, uuid, virtual FROM system_info ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const osInfoParsed = JSON.parse(mostRecentEntry.osInfo);
+    const systemInfo = {
+      macs: mostRecentEntry.macs,
+      platform: osInfoParsed.platform,
+      architecture: osInfoParsed.arch,
+      hostName: osInfoParsed.hostname,
+      release: osInfoParsed.release,
+      uuid: mostRecentEntry.uuid,
+      virtual: mostRecentEntry.virtual,
+    };
+
+    return systemInfo;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getStaticRAMData() {
+  try {
+    const mostRecentEntry = await new Promise((resolve, reject) => {
+      db.get(
+        `SELECT size, type, clockSpeed, manufacturer FROM static_ram ORDER BY timestamp DESC LIMIT 1`,
+        [],
+        (err, row) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(row);
+        }
+      );
+    });
+
+    const ramInfo = {
+      size: mostRecentEntry.size,
+      type: mostRecentEntry.type,
+      clockSpeed: mostRecentEntry.clockSpeed,
+      manufacturer: mostRecentEntry.manufacturer,
+    };
+
+    return ramInfo;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return null;
+  }
+}
+
+async function getAllData() {
+  try {
+    const [
+      staticCPUDetails,
+      currentLoadData,
+      memoryUsageData,
+      networkTrafficData,
+      downloadSpeedData,
+      packetLossPercentageData,
+      jitterData,
+      latencyData,
+      systemInfo,
+      staticRAMData,
+    ] = await Promise.all([
+      getStaticCPUDetails(),
+      getCurrentLoadData(),
+      getMemoryUsageData(),
+      getNetworkTrafficData(),
+      getDownloadSpeedData(),
+      getPacketLossPercentageData(),
+      getJitterData(),
+      getLatencyData(),
+      getSystemInfo(),
+      getStaticRAMData(),
+    ]);
+
+    const accumulatedData = {
+      staticCPUDetails,
+      currentLoadData,
+      memoryUsageData,
+      networkTrafficData,
+      downloadSpeedData,
+      packetLossPercentageData,
+      jitterData,
+      latencyData,
+      systemInfo,
+      staticRAMData,
+    };
+
+    return accumulatedData;
+  } catch (error) {
+    console.error("An error occurred while getting all data:", error);
+    return null;
+  }
+}
+
+module.exports = { getAllData };
