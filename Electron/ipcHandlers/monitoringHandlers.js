@@ -155,8 +155,6 @@ const handleStaticData = async () => {
 
     const staticRAMData = await getStaticRAMData();
     insertData("static_ram", staticRAMData);
-
-    // console.log("Static data saved successfully.");
   } catch (error) {
     console.error("Failed to handle static data:", error);
   }

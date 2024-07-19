@@ -5,32 +5,14 @@ const store = new Store();
 const axios = require("axios");
 const path = require("path");
 const { exchangeCodeForTokens } = require("./authHelpers");
+const WebSocketManager = require("./socketsHandler");
 
 const loginIPC = (mainWindow) => {
   ipcMain.handle("check-connection", async () => {
-    const clientId = store.get("appId");
-    const secretKey = store.get("clientSecret");
-    const tenantId = store.get("tenantId");
-
-    return new Promise((resolve) => {
-      const queryParams = new URLSearchParams({
-        appId: clientId,
-        clientSecret: secretKey,
-        tenantId: tenantId,
-      }).toString();
-
-      const requestUrl = `http://localhost:5000/endpointMetrics/status?${queryParams}`;
-
-      const request = net.request(requestUrl);
-      request.on("response", (response) => {
-        resolve(response.statusCode === 200 ? "Connected" : "Failed");
-      });
-      request.on("error", (error) => {
-        console.error("Connection check error:", error);
-        resolve("Failed (trying again in 2 mins)");
-      });
-      request.end();
-    });
+    const wsManager = WebSocketManager.getInstance();
+    return wsManager && wsManager.isConnected()
+      ? "Live"
+      : "Failed (trying again in 2 mins)";
   });
 
   ipcMain.on("check-auth", (event) => {
@@ -38,6 +20,16 @@ const loginIPC = (mainWindow) => {
     const secretKey = store.get("clientSecret");
 
     if (clientId && secretKey) {
+      const wsManager = WebSocketManager.getInstance();
+
+      if (!wsManager || !wsManager.isConnected()) {
+        const webSocketManager = new WebSocketManager(
+          "ws://localhost:5000/ws/endpointMetrics/",
+          clientId,
+          secretKey
+        );
+      }
+
       event.reply("auth-status", {
         isAuthenticated: true,
         clientId,

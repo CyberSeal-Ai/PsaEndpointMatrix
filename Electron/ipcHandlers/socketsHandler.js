@@ -3,6 +3,8 @@ const Store = require("electron-store");
 const { getAllData } = require("./sockets"); // Update with the correct path to your module
 
 class WebSocketManager {
+  static instance = null;
+
   constructor(url, appId, secretKey, retryInterval = 2000) {
     this.url = url;
     this.appId = appId;
@@ -11,6 +13,9 @@ class WebSocketManager {
     this.socket = null;
     this.store = new Store(); // Initialize the Electron store
     this.connect();
+
+    // Assign the instance to the static property
+    WebSocketManager.instance = this;
   }
 
   connect() {
@@ -111,6 +116,14 @@ class WebSocketManager {
     setTimeout(() => {
       this.connect();
     }, this.retryInterval);
+  }
+
+  isConnected() {
+    return this.socket && this.socket.readyState === WebSocket.OPEN;
+  }
+
+  static getInstance() {
+    return WebSocketManager.instance;
   }
 }
 

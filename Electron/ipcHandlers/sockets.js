@@ -1,6 +1,7 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const { DateTime } = require("luxon");
+const { get } = require("http");
 
 const dbPath = path.join(__dirname, "system_data.db");
 const db = new sqlite3.Database(dbPath);
@@ -65,7 +66,7 @@ async function getCurrentLoadData() {
           AVG(currentLoad) AS currentLoad
         FROM dynamic_cpu
         WHERE timestamp >= ?
-        GROUP BY bucketKey
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
         ORDER BY bucketKey
       `;
       db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
@@ -170,7 +171,7 @@ async function getNetworkTrafficData() {
           SUM(rx_bytes) AS rxBytes
         FROM dynamic_network
         WHERE timestamp >= ?
-        GROUP BY bucketKey
+        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
         ORDER BY bucketKey
       `;
       db.all(query, [twelveHoursBeforeMostRecent.toISO()], (err, rows) => {
@@ -456,6 +457,100 @@ async function getStaticRAMData() {
   }
 }
 
+async function queryDatabase(query, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(query, params, (err, rows) => {
+      if (err) {
+        return reject(err);
+      }
+      resolve(rows);
+    });
+  });
+}
+
+async function getUniqueInterfacesAndMostRecent() {
+  try {
+    const results = await queryDatabase(
+      `SELECT Interfaces, timestamp FROM dynamic_network`
+    );
+
+    const interfacesMap = new Map();
+
+    results.forEach((row) => {
+      let interfaces;
+      try {
+        interfaces = JSON.parse(row.Interfaces);
+      } catch (err) {
+        console.error(`Failed to parse JSON: ${row.interfaces}`);
+        return;
+      }
+
+      const ifaceName = interfaces.ifaceName;
+
+      if (!interfacesMap.has(ifaceName)) {
+        interfacesMap.set(ifaceName, {
+          iface: interfaces.iface,
+          ifaceName: interfaces.ifaceName,
+          IP4: interfaces.IP4,
+          IP6: interfaces.IP6,
+          dnsSuffix: interfaces.dnsSuffix,
+          MacAddress: interfaces.macAddress,
+          mostRecentTimestamp: DateTime.fromISO(row.timestamp),
+        });
+      } else {
+        const existingEntry = interfacesMap.get(ifaceName);
+        const currentTimestamp = DateTime.fromISO(row.timestamp);
+
+        if (currentTimestamp > existingEntry.mostRecentTimestamp) {
+          existingEntry.mostRecentTimestamp = currentTimestamp;
+          existingEntry.IP4 = interfaces.IP4;
+          existingEntry.IP6 = interfaces.IP6;
+          existingEntry.dnsSuffix = interfaces.dnsSuffix;
+          existingEntry.MacAddress = interfaces.macAddress;
+        }
+      }
+    });
+
+    const uniqueInterfaces = Array.from(interfacesMap.values());
+
+    let mostRecentInterface = null;
+
+    if (uniqueInterfaces.length > 0) {
+      mostRecentInterface = uniqueInterfaces.reduce((mostRecent, iface) => {
+        return iface.mostRecentTimestamp > mostRecent.mostRecentTimestamp
+          ? iface
+          : mostRecent;
+      });
+    }
+
+    return { uniqueInterfaces, mostRecentInterface };
+  } catch (error) {
+    console.error(
+      "An error occurred while extracting unique interfaces and the most recent one:",
+      error
+    );
+    return null;
+  }
+}
+
+(async () => {
+  try {
+    const { uniqueInterfaces, mostRecentInterface } =
+      await getUniqueInterfacesAndMostRecent();
+    console.log("Unique Interfaces:", uniqueInterfaces);
+    console.log("Most Recent Interface:", mostRecentInterface);
+  } catch (error) {
+    console.error("An error occurred in the main execution:", error);
+  }
+})();
+
+(async () => {
+  const { uniqueInterfaces, mostRecentInterface } =
+    await getUniqueInterfacesAndMostRecent();
+  console.log("Unique Interfaces:", uniqueInterfaces);
+  console.log("Most Recent Interface:", mostRecentInterface);
+})();
+
 async function getAllData() {
   try {
     const [
@@ -469,6 +564,7 @@ async function getAllData() {
       latencyData,
       systemInfo,
       staticRAMData,
+      InterfaceData,
     ] = await Promise.all([
       getStaticCPUDetails(),
       getCurrentLoadData(),
@@ -480,6 +576,7 @@ async function getAllData() {
       getLatencyData(),
       getSystemInfo(),
       getStaticRAMData(),
+      getUniqueInterfacesAndMostRecent(),
     ]);
 
     const accumulatedData = {
@@ -493,6 +590,7 @@ async function getAllData() {
       latencyData,
       systemInfo,
       staticRAMData,
+      InterfaceData,
     };
 
     return accumulatedData;
