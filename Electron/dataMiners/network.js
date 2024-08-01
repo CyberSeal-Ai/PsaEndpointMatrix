@@ -1,22 +1,49 @@
-// const { InfluxDB, Point } = require("@influxdata/influxdb-client");
 const si = require("systeminformation");
 const ping = require("ping");
+const https = require("https");
 
-// require("dotenv").config({ path: "../.env" });
+const axios = require("axios");
 
-// const token =
-//   "6KozKP130beZY366OUum4YM7Hxm4HTQ2lvZHEsHHND3foo84PG8zTmlniqgzaezMyufT6RGTtPcRBpaA9OIiOQ==";
-// const url = "http://localhost:8086";
-// const org = "CYBERSEAL";
-// const bucket = "NETWORK_LOGS";
+async function getPublicIpAndVpnInfo() {
+  try {
+    const ipResponse = await axios.get("https://api.ipify.org?format=json");
+    const ipAddress = ipResponse.data.ip;
+    console.log(`Public IP Address: ${ipAddress}`);
 
-// const influx = new InfluxDB({
-//   url,
-//   token,
-// });
+    const apiKey = "f7e4f0334814499e958bcf0ea939b2b5";
+    const vpnApiUrl = `https://vpnapi.io/api/${ipAddress}?key=${apiKey}`;
+    const vpnResponse = await axios.get(vpnApiUrl);
+    const vpnData = vpnResponse.data;
+    console.log("VPN API Data:", vpnData);
 
-// const writeClient = influx.getWriteApi(org, bucket, "ns");
+    // Return the output of the vpnapi.io API
+    return vpnData;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+}
 
+async function getNetworkInfo() {
+  return new Promise((resolve, reject) => {
+    const ipToken = "2d39a2ec2fdbb4";
+    https
+      .get(`https://ipinfo.io?token=${ipToken}`, (resp) => {
+        let data = "";
+
+        resp.on("data", (chunk) => {
+          data += chunk;
+        });
+
+        resp.on("end", () => {
+          resolve(JSON.parse(data));
+        });
+      })
+      .on("error", (err) => {
+        reject("Error: " + err.message);
+      });
+  });
+}
 
 async function calculatePacketLoss() {
   const host = "8.8.8.8";
@@ -59,10 +86,28 @@ async function calculateJitterAndLatency() {
   const latencyAverage =
     latencyValues.length > 0 ? latencySum / latencyValues.length : 0;
 
-  // console.log("Jitter:", jitterAverage);
-  // console.log("Latency:", latencyAverage);
-
   return { jitter: jitterAverage || 0, latency: latencyAverage || 0 };
+}
+
+async function getISPData() {
+  try {
+    const ipResponse = await axios.get("https://api.ipify.org?format=json");
+    const ipAddress = ipResponse.data.ip;
+    console.log(`Public IP Address: ${ipAddress}`);
+
+    const apiKey = "f7e4f0334814499e958bcf0ea939b2b5";
+    const vpnApiUrl = `https://vpnapi.io/api/${ipAddress}?key=${apiKey}`;
+    const vpnResponse = await axios.get(vpnApiUrl);
+    const vpnData = {};
+    vpnData.vpn = vpnResponse.data;
+    console.log("VPN API Data:", vpnData);
+
+    // Return the output of the vpnapi.io API
+    return vpnData;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
 }
 
 async function getDynamicNetworkData() {
@@ -71,12 +116,9 @@ async function getDynamicNetworkData() {
     const Interfaces = await si.networkInterfaces("default");
     const systemInfo = await si.system();
     const uuid = systemInfo.uuid;
-    // si.networkInterfaces("default").then((data) => console.log(data));
     const networkStats = await si.networkStats();
-    const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
-    // const downloadSpeed = await speedTest.();
+    const pingResult = await ping.promise.probe("8.8.8.8");
     const jitterAndLatency = await calculateJitterAndLatency();
-    const packetLoss = (pingResult.packetLoss * 100) / pingResult.sent;
     const packetLossPercentage = await calculatePacketLoss();
 
     return {
@@ -100,30 +142,7 @@ async function getDynamicNetworkData() {
   }
 }
 
-// function logDynamicNetworkData(dynamicData) {
-//   if (dynamicData === null) {
-//     console.error("Dynamic network data is null");
-//     return;
-//   }
-
-//   const networkDataPoint = new Point("network_data")
-//     .tag("iface", dynamicData.iface || "unknown")
-//     .floatField("rx_bytes", dynamicData.rx_bytes || 0)
-//     .floatField("rx_dropped", dynamicData.rx_dropped || 0)
-//     .floatField("rx_errors", dynamicData.rx_errors || 0)
-//     .floatField("tx_bytes", dynamicData.tx_bytes || 0)
-//     .floatField("tx_dropped", dynamicData.tx_dropped || 0)
-//     .floatField("tx_errors", dynamicData.tx_errors || 0)
-//     .floatField("inetLatency", dynamicData.inetLatency || 0)
-//     .floatField("jitter", dynamicData.jitter || 0)
-//     .floatField("downloadSpeed", dynamicData.downloadSpeed || 0)
-//     .floatField("packetLossPercentage", dynamicData.packetLossPercentage || 0);
-
-//   writeClient.writePoint(networkDataPoint);
-//   writeClient.flush();
-// }
-
 module.exports = {
   getDynamicNetworkData,
-  //   logDynamicNetworkData,
+  getISPData,
 };

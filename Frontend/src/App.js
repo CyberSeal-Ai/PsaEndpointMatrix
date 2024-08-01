@@ -15,13 +15,13 @@ function App() {
 
   const checkConnection = async () => {
     const status = await window.electron.invoke("check-connection");
-    if (status === "Connected") {
+    if (status === "Live") {
       console.log(status);
       setConnectionStatusBoolean(true);
-      setConnectionStatus("Connected");
+      setConnectionStatus("Live");
     } else {
       setConnectionStatusBoolean(false);
-      setConnectionStatus("Failed (trying again in 2 mins)");
+      setConnectionStatus("Connecting ...");
     }
     console.log("Connection status:", status);
   };
@@ -31,7 +31,7 @@ function App() {
       checkConnection();
     }
 
-    const intervalId = setInterval(checkConnection, 120000);
+    const intervalId = setInterval(checkConnection, 12000);
 
     return () => clearInterval(intervalId);
   }, []);
@@ -119,7 +119,7 @@ function App() {
                 Start Monitoring
               </Button>
             )}
-            {connectionStatus !== "Connected" && (
+            {connectionStatus !== "Live" && (
               <Button
                 variant="contained"
                 color="info"

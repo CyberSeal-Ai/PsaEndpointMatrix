@@ -1,0 +1,861 @@
+{
+  "staticCPUDetails": {
+    "Model": "104",
+    "ManufacturerCPU": "AMD",
+    "Brand": "Ryzen 5 5500U with Radeon Graphics",
+    "CPUModel": "104",
+    "Speed": "2.1",
+    "Cores": 12,
+    "PhysicalCores": 6,
+    "ProcessorsCount": 1
+  },
+  "currentLoadData": [
+    {
+      "CurrentLoad": "5.15",
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "CurrentLoad": "4.08",
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "CurrentLoad": "5.02",
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "CurrentLoad": "8.47",
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "CurrentLoad": "6.08",
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "CurrentLoad": "7.45",
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "memoryUsageData": [
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "1.87",
+      "UsedSpace": "13.45",
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "2.38",
+      "UsedSpace": "12.95",
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "2.37",
+      "UsedSpace": "12.96",
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "1.96",
+      "UsedSpace": "13.37",
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "3.31",
+      "UsedSpace": "12.01",
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "3.09",
+      "UsedSpace": "12.24",
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "networkTrafficData": [
+    {
+      "TxBytes": 8348054970,
+      "RxBytes": 68809064486,
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "TxBytes": 16789393578,
+      "RxBytes": 138147188693,
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "TxBytes": 17037903791,
+      "RxBytes": 138351013009,
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "TxBytes": 19644798816,
+      "RxBytes": 140278202866,
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "TxBytes": 21338506303,
+      "RxBytes": 141016193772,
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "TxBytes": 9910574441,
+      "RxBytes": 65823522197,
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "downloadSpeedData": [
+    {
+      "AverageDownloadSpeed": "6.25",
+      "Timestamp": "2024-08-01T07:00:00"
+    },
+    {
+      "AverageDownloadSpeed": "6.06",
+      "Timestamp": "2024-08-01T08:00:00"
+    }
+  ],
+  "packetLossPercentageData": [
+    {
+      "PacketLossPercentage": "1.50",
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "PacketLossPercentage": "1.75",
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "PacketLossPercentage": "1.00",
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "PacketLossPercentage": "1.75",
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "PacketLossPercentage": "1.00",
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "PacketLossPercentage": "0.00",
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "jitterData": [
+    {
+      "Jitter": "1.99",
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "Jitter": "0.66",
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "Jitter": "5.38",
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "Jitter": "4.63",
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "Jitter": "1.46",
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "Jitter": "0.92",
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "latencyData": [
+    {
+      "Latency": "20.50",
+      "Timestamp": "2024-08-01T07:55:00"
+    },
+    {
+      "Latency": "14.03",
+      "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "Latency": "18.27",
+      "Timestamp": "2024-08-01T08:10:00"
+    },
+    {
+      "Latency": "7.58",
+      "Timestamp": "2024-08-01T08:20:00"
+    },
+    {
+      "Latency": "19.18",
+      "Timestamp": "2024-08-01T08:30:00"
+    },
+    {
+      "Latency": "25.39",
+      "Timestamp": "2024-08-01T08:40:00"
+    }
+  ],
+  "systemInfo": {
+    "macs": "[\"00:15:5d:47:ea:53\",\"00:15:5d:e1:66:ff\",\"90:e8:68:f2:62:b7\"]",
+    "platform": "win32",
+    "architecture": "x64",
+    "hostName": "SR71",
+    "release": "10.0.22631",
+    "uuid": "302f3532-2f37-3032-3232-32302f372f32",
+    "virtual": "0"
+  },
+  "staticRAMData": {
+    "size": 8589934592,
+    "type": "DDR4",
+    "clockSpeed": 3200,
+    "manufacturer": "Hynix"
+  },
+  "InterfaceData": {
+    "uniqueInterfaces": [
+      {
+        "iface": "Wi-Fi",
+        "ifaceName": "Realtek RTL8822CE 802.11ac PCIe Adapter",
+        "default": true,
+        "ip4": "10.81.34.185",
+        "ip4subnet": "255.255.240.0",
+        "ip6": "",
+        "ip6subnet": "",
+        "mac": "90:e8:68:f2:62:b7",
+        "internal": false,
+        "virtual": false,
+        "operstate": "up",
+        "type": "wired",
+        "duplex": "",
+        "mtu": "",
+        "speed": 300,
+        "dhcp": true,
+        "dnsSuffix": "iitr.ac.in",
+        "ieee8021xAuth": "Not defined",
+        "ieee8021xState": "Disabled",
+        "carrierChanges": 0,
+        "mostRecentTimestamp": "2024-08-01T14:14:29.840+05:30"
+      },
+      {
+        "iface": "vEthernet (Default Switch)",
+        "ifaceName": "vEthernet (Default Switch)",
+        "default": true,
+        "ip4": "172.30.192.1",
+        "ip4subnet": "255.255.240.0",
+        "ip6": "fe80::d5c5:67a1:8448:ad2d",
+        "ip6subnet": "ffff:ffff:ffff:ffff::",
+        "mac": "00:15:5d:47:ea:53",
+        "internal": false,
+        "virtual": true,
+        "operstate": "down",
+        "type": "",
+        "duplex": "",
+        "mtu": "",
+        "speed": null,
+        "dhcp": false,
+        "dnsSuffix": "",
+        "ieee8021xAuth": "Unknown",
+        "ieee8021xState": "Unknown",
+        "carrierChanges": 0,
+        "mostRecentTimestamp": "2024-08-01T14:00:50.487+05:30"
+      }
+    ],
+    "mostRecentInterface": {
+      "iface": "Wi-Fi",
+      "ifaceName": "Realtek RTL8822CE 802.11ac PCIe Adapter",
+      "default": true,
+      "ip4": "10.81.34.185",
+      "ip4subnet": "255.255.240.0",
+      "ip6": "",
+      "ip6subnet": "",
+      "mac": "90:e8:68:f2:62:b7",
+      "internal": false,
+      "virtual": false,
+      "operstate": "up",
+      "type": "wired",
+      "duplex": "",
+      "mtu": "",
+      "speed": 300,
+      "dhcp": true,
+      "dnsSuffix": "iitr.ac.in",
+      "ieee8021xAuth": "Not defined",
+      "ieee8021xState": "Disabled",
+      "carrierChanges": 0,
+      "mostRecentTimestamp": "2024-08-01T14:14:29.840+05:30"
+    }
+  },
+  "ISPData": {
+    "uniqueNetworkInfo": [
+      {
+        "ip": "103.37.201.173",
+        "security": {
+          "vpn": false,
+          "proxy": false,
+          "tor": false,
+          "relay": false
+        },
+        "location": {
+          "city": "",
+          "region": "",
+          "country": "India",
+          "continent": "Asia",
+          "region_code": "",
+          "country_code": "IN",
+          "continent_code": "AS",
+          "latitude": "21.9974",
+          "longitude": "79.0011",
+          "time_zone": "Asia/Kolkata",
+          "locale_code": "en",
+          "metro_code": "",
+          "is_in_european_union": false
+        },
+        "network": {
+          "network": "103.37.200.0/23",
+          "autonomous_system_number": "AS131226",
+          "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
+        },
+        "mostRecentTimestamp": "2024-07-27T19:11:19.105+05:30"
+      },
+      {
+        "ip": "109.236.81.188",
+        "security": {
+          "vpn": true,
+          "proxy": false,
+          "tor": false,
+          "relay": false
+        },
+        "location": {
+          "city": "Naaldwijk",
+          "region": "South Holland",
+          "country": "The Netherlands",
+          "continent": "Europe",
+          "region_code": "ZH",
+          "country_code": "NL",
+          "continent_code": "EU",
+          "latitude": "51.9981",
+          "longitude": "4.1980",
+          "time_zone": "Europe/Amsterdam",
+          "locale_code": "en",
+          "metro_code": "",
+          "is_in_european_union": true
+        },
+        "network": {
+          "network": "109.236.80.0/20",
+          "autonomous_system_number": "AS49981",
+          "autonomous_system_organization": "WorldStream B.V."
+        },
+        "mostRecentTimestamp": "2024-07-27T19:22:07.141+05:30"
+      },
+      {
+        "ip": "103.37.201.176",
+        "security": {
+          "vpn": false,
+          "proxy": false,
+          "tor": false,
+          "relay": false
+        },
+        "location": {
+          "city": "",
+          "region": "",
+          "country": "India",
+          "continent": "Asia",
+          "region_code": "",
+          "country_code": "IN",
+          "continent_code": "AS",
+          "latitude": "21.9974",
+          "longitude": "79.0011",
+          "time_zone": "Asia/Kolkata",
+          "locale_code": "en",
+          "metro_code": "",
+          "is_in_european_union": false
+        },
+        "network": {
+          "network": "103.37.200.0/23",
+          "autonomous_system_number": "AS131226",
+          "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
+        },
+        "mostRecentTimestamp": "2024-07-31T22:57:29.779+05:30"
+      },
+      {
+        "ip": "103.37.201.174",
+        "security": {
+          "vpn": false,
+          "proxy": false,
+          "tor": false,
+          "relay": false
+        },
+        "location": {
+          "city": "",
+          "region": "",
+          "country": "India",
+          "continent": "Asia",
+          "region_code": "",
+          "country_code": "IN",
+          "continent_code": "AS",
+          "latitude": "21.9974",
+          "longitude": "79.0011",
+          "time_zone": "Asia/Kolkata",
+          "locale_code": "en",
+          "metro_code": "",
+          "is_in_european_union": false
+        },
+        "network": {
+          "network": "103.37.200.0/23",
+          "autonomous_system_number": "AS131226",
+          "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
+        },
+        "mostRecentTimestamp": "2024-08-01T14:00:44.464+05:30"
+      }
+    ],
+    "mostRecentNetworkInfo": {
+      "ip": "103.37.201.174",
+      "security": {
+        "vpn": false,
+        "proxy": false,
+        "tor": false,
+        "relay": false
+      },
+      "location": {
+        "city": "",
+        "region": "",
+        "country": "India",
+        "continent": "Asia",
+        "region_code": "",
+        "country_code": "IN",
+        "continent_code": "AS",
+        "latitude": "21.9974",
+        "longitude": "79.0011",
+        "time_zone": "Asia/Kolkata",
+        "locale_code": "en",
+        "metro_code": "",
+        "is_in_european_union": false
+      },
+      "network": {
+        "network": "103.37.200.0/23",
+        "autonomous_system_number": "AS131226",
+        "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
+      },
+      "mostRecentTimestamp": "2024-08-01T14:00:44.464+05:30"
+    }
+  },
+  "BatteryData": [
+    {
+      "AverageBatteryPercentage": "98.50",
+      "Timestamp": "2024-08-01T08:00:00",
+      "BatteryStatus": "on-ac"
+    },
+    {
+      "AverageBatteryPercentage": "99.53",
+      "Timestamp": "2024-08-01T08:10:00",
+      "BatteryStatus": "on-ac"
+    },
+    {
+      "AverageBatteryPercentage": "100.00",
+      "Timestamp": "2024-08-01T08:20:00",
+      "BatteryStatus": "on-ac"
+    },
+    {
+      "AverageBatteryPercentage": "99.17",
+      "Timestamp": "2024-08-01T08:30:00",
+      "BatteryStatus": "on-ac"
+    },
+    {
+      "AverageBatteryPercentage": "100.00",
+      "Timestamp": "2024-08-01T08:40:00",
+      "BatteryStatus": "on-ac"
+    }
+  ],
+  "TraceData": {
+    "destination": "52.114.229.11",
+    "target": "a-tr-teamsc-swcn-06.swedencentral.cloudapp.azure.com",
+    "hops": [
+      {
+        "hop": 1,
+        "times": [
+          158,
+          166,
+          165
+        ],
+        "address": "10.96.0.1"
+      },
+      {
+        "hop": 2,
+        "times": [
+          162,
+          172,
+          175
+        ],
+        "address": "109-236-81-252.hosted-by-worldstream.net [109.236.81.252]",
+        "vpnInfo": {
+          "ip": "109.236.81.252",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "Naaldwijk",
+            "region": "South Holland",
+            "country": "The Netherlands",
+            "continent": "Europe",
+            "region_code": "ZH",
+            "country_code": "NL",
+            "continent_code": "EU",
+            "latitude": "51.9981",
+            "longitude": "4.1980",
+            "time_zone": "Europe/Amsterdam",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": true
+          },
+          "network": {
+            "network": "109.236.80.0/20",
+            "autonomous_system_number": "AS49981",
+            "autonomous_system_organization": "WorldStream B.V."
+          }
+        }
+      },
+      {
+        "hop": 3,
+        "times": [
+          162,
+          175,
+          164
+        ],
+        "address": "109.236.95.224",
+        "vpnInfo": {
+          "ip": "109.236.95.224",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "Naaldwijk",
+            "region": "South Holland",
+            "country": "The Netherlands",
+            "continent": "Europe",
+            "region_code": "ZH",
+            "country_code": "NL",
+            "continent_code": "EU",
+            "latitude": "51.9981",
+            "longitude": "4.1980",
+            "time_zone": "Europe/Amsterdam",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": true
+          },
+          "network": {
+            "network": "109.236.80.0/20",
+            "autonomous_system_number": "AS49981",
+            "autonomous_system_organization": "WorldStream B.V."
+          }
+        }
+      },
+      {
+        "hop": 5,
+        "times": [
+          168,
+          170,
+          177
+        ],
+        "address": "ams-ix-2.microsoft.com [80.249.209.21]",
+        "vpnInfo": {
+          "ip": "80.249.209.21",
+          "security": {
+            "vpn": false,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "Schiphol",
+            "region": "North Holland",
+            "country": "The Netherlands",
+            "continent": "Europe",
+            "region_code": "NH",
+            "country_code": "NL",
+            "continent_code": "EU",
+            "latitude": "52.2832",
+            "longitude": "4.7521",
+            "time_zone": "Europe/Amsterdam",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": true
+          },
+          "network": {
+            "network": "80.249.216.0/23",
+            "autonomous_system_number": "AS49415",
+            "autonomous_system_organization": "VTSL Ltd"
+          }
+        }
+      },
+      {
+        "hop": 6,
+        "times": [
+          166,
+          166,
+          162
+        ],
+        "address": "ae20-0.icr04.ams21.ntwk.msn.net [104.44.230.28]",
+        "vpnInfo": {
+          "ip": "104.44.230.28",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 7,
+        "times": [
+          191,
+          197,
+          195
+        ],
+        "address": "be-106-0.ibr01.ams21.ntwk.msn.net [104.44.23.244]",
+        "vpnInfo": {
+          "ip": "104.44.23.244",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 8,
+        "times": [
+          190,
+          197,
+          195
+        ],
+        "address": "be-11-0.ibr05.ams06.ntwk.msn.net [104.44.29.243]",
+        "vpnInfo": {
+          "ip": "104.44.29.243",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 10,
+        "times": [
+          196,
+          202,
+          194
+        ],
+        "address": "be-3-0.ibr01.ham31.ntwk.msn.net [104.44.28.245]",
+        "vpnInfo": {
+          "ip": "104.44.28.245",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 11,
+        "times": [
+          197,
+          198,
+          203
+        ],
+        "address": "be-6-0.ibr01.sto31.ntwk.msn.net [104.44.29.212]",
+        "vpnInfo": {
+          "ip": "104.44.29.212",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 12,
+        "times": [
+          193,
+          198,
+          198
+        ],
+        "address": "be-7-0.ibr01.gvx01.ntwk.msn.net [104.44.18.187]",
+        "vpnInfo": {
+          "ip": "104.44.18.187",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      },
+      {
+        "hop": 13,
+        "times": [
+          199,
+          185,
+          253
+        ],
+        "address": "ae106-0.rwa04.gvx01.ntwk.msn.net [104.44.23.20]",
+        "vpnInfo": {
+          "ip": "104.44.23.20",
+          "security": {
+            "vpn": true,
+            "proxy": false,
+            "tor": false,
+            "relay": false
+          },
+          "location": {
+            "city": "",
+            "region": "",
+            "country": "United States",
+            "continent": "North America",
+            "region_code": "",
+            "country_code": "US",
+            "continent_code": "NA",
+            "latitude": "37.7510",
+            "longitude": "-97.8220",
+            "time_zone": "America/Chicago",
+            "locale_code": "en",
+            "metro_code": "",
+            "is_in_european_union": false
+          },
+          "network": {
+            "network": "104.40.0.0/13",
+            "autonomous_system_number": "AS8075",
+            "autonomous_system_organization": "MICROSOFT-CORP-MSN-AS-BLOCK"
+          }
+        }
+      }
+    ],
+    "totalHops": 19
+  }
+}

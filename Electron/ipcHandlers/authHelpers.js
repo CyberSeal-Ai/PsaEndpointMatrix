@@ -1,4 +1,5 @@
-const { app, BrowserWindow, ipcMain, net } = require("electron");
+const { app, BrowserWindow, ipcMain, net, ipcRenderer } = require("electron");
+const WebSocketManager = require("./socketsHandler");
 const querystring = require("querystring");
 const Store = require("electron-store");
 const store = new Store();
@@ -36,7 +37,8 @@ async function fetchUserDetails(accessToken) {
 
     if (response.data) {
       const { displayName, id: userId, userPrincipalName } = response.data;
-      store.set("userDetails", { displayName, userId, userPrincipalName }); // Store user details securely
+      store.set("userDetails", { displayName, userId, userPrincipalName });
+      store.set("userPrincipalName", userPrincipalName); // Store the user's email address
       console.log("User Details:", { displayName, userId, userPrincipalName });
     }
   } catch (error) {
@@ -50,9 +52,7 @@ async function registerApplication(
   tenantId,
   webContents
 ) {
-  const apiUrl = new URL(
-    "https://demo.cybersealai.com/backend/endpointMetrics/Register"
-  );
+  const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
   apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
   apiUrl.searchParams.append("MStoken", accessToken);
   apiUrl.searchParams.append("tenantid", tenantId);
@@ -65,7 +65,6 @@ async function registerApplication(
 
     const data = await response.json();
     if (data && data.Data && data.Data.appId && data.Data.clientSecret) {
-      // Store the appId and clientSecret in the Electron store
       store.set("appId", data.Data.appId);
       store.set("clientSecret", data.Data.clientSecret);
 
@@ -75,6 +74,14 @@ async function registerApplication(
         appId: data.Data.appId,
         clientSecret: data.Data.clientSecret,
       });
+
+      // Establish WebSocket connection
+      const webSocketManager = new WebSocketManager(
+        "ws://localhost:5000/ws/endpointMetrics/",
+        data.Data.appId,
+        data.Data.clientSecret,
+        tenantId
+      );
     }
   } catch (error) {
     console.error("Error registering application:", error);

@@ -1,6 +1,7 @@
 const si = require("systeminformation");
 const fs = require("fs");
 const os = require("os");
+const path = require("path");
 
 async function getSystemInfo() {
   try {
@@ -25,16 +26,6 @@ async function getSystemInfo() {
   }
 }
 
-async function saveSystemInfoToFile() {
-  const systemInfo = await getSystemInfo();
-  if (systemInfo !== null) {
-    const dataPath = "staticData/system.json";
-
-    fs.writeFileSync(dataPath, JSON.stringify(systemInfo, null, 2), "utf-8");
-  }
-}
-
 module.exports = {
   getSystemInfo,
-  saveSystemInfoToFile,
 };
