@@ -79,7 +79,8 @@ async function registerApplication(
       const webSocketManager = new WebSocketManager(
         "ws://localhost:5000/ws/endpointMetrics/",
         data.Data.appId,
-        data.Data.clientSecret
+        data.Data.clientSecret,
+        tenantId
       );
     }
   } catch (error) {

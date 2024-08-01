@@ -5,10 +5,11 @@ const { getAllData } = require("./sockets"); // Update with the correct path to 
 class WebSocketManager {
   static instance = null;
 
-  constructor(url, appId, secretKey, retryInterval = 2000) {
+  constructor(url, appId, secretKey, tenantId, retryInterval = 2000) {
     this.url = url;
     this.appId = appId;
     this.secretKey = secretKey;
+    this.tenantId = tenantId;
     this.retryInterval = retryInterval;
     this.socket = null;
     this.store = new Store(); // Initialize the Electron store
@@ -44,7 +45,11 @@ class WebSocketManager {
     const authPayload = JSON.stringify({
       appid: this.appId,
       secret_key: this.secretKey,
+      tenant_id: this.tenantId,
     });
+
+    console.log("%%%%%%%%%%%%%%%%%%%%%%%%%%");
+    console.log(authPayload);
     this.socket.send(authPayload);
     console.log("Authentication details sent.");
   }

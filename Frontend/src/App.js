@@ -21,7 +21,7 @@ function App() {
       setConnectionStatus("Live");
     } else {
       setConnectionStatusBoolean(false);
-      setConnectionStatus("Failed (trying again in 2 mins)");
+      setConnectionStatus("Connecting ...");
     }
     console.log("Connection status:", status);
   };
