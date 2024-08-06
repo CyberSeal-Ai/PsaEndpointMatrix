@@ -5,7 +5,7 @@ const { getAllData } = require("./sockets"); // Update with the correct path to 
 class WebSocketManager {
   static instance = null;
 
-  constructor(url, appId, secretKey, retryInterval = 2000) {
+  constructor(url, appId, secretKey, tenantId, retryInterval = 2000) {
     this.url = url;
     this.appId = appId;
     this.secretKey = secretKey;

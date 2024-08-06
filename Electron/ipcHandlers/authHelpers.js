@@ -52,9 +52,7 @@ async function registerApplication(
   tenantId,
   webContents
 ) {
-  const apiUrl = new URL(
-    "https://demo.ezaix.com/backend/endpointMetrics/Register"
-  );
+  const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
   apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
   apiUrl.searchParams.append("MStoken", accessToken);
   apiUrl.searchParams.append("tenantid", tenantId);
@@ -79,7 +77,7 @@ async function registerApplication(
 
       // Establish WebSocket connection
       const webSocketManager = new WebSocketManager(
-        "wss://demo.ezaix.com/ws/endpointMetrics/",
+        "ws://localhost:5000/ws/endpointMetrics/",
         data.Data.appId,
         data.Data.clientSecret
       );
