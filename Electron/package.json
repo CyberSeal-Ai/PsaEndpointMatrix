@@ -1,10 +1,10 @@
 {
   "name": "Ezaix-Endpoint-Metrics",
-  "version": "2.0.0",
+  "version": "1.1.0",
   "author": {
     "name": "Ezaix",
     "email": "info@cybersealai.com",
-    "url": "https://ezaix.com/",
+    "url": "https://cybersealai.com",
     "company": "Ezaix"
   },
   "main": "main.js",
@@ -16,7 +16,7 @@
     "build:linux": "electron-builder --linux"
   },
   "build": {
-    "appId": "com.ezaix.endpointmetrics",
+    "appId": "your.appblah.id",
     "productName": "Ezaix Endpoint-Metrics",
     "directories": {
       "output": "release-builds"
@@ -47,12 +47,9 @@
     "electron-store": "^8.1.0",
     "fast-speedtest-api": "^0.3.2",
     "fs": "^0.0.1-security",
-    "luxon": "^3.4.4",
     "node-fetch": "^3.3.2",
     "ping": "^0.4.4",
-    "sqlite3": "^5.1.6",
-    "systeminformation": "^5.21.24",
-    "ws": "^8.18.0"
+    "systeminformation": "^5.21.24"
   },
   "devDependencies": {
     "electron": "^28.2.2",

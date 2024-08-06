@@ -81,8 +81,7 @@ async function registerApplication(
       const webSocketManager = new WebSocketManager(
         "wss://demo.ezaix.com/ws/endpointMetrics/",
         data.Data.appId,
-        data.Data.clientSecret,
-        tenantId
+        data.Data.clientSecret
       );
     }
   } catch (error) {

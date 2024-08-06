@@ -1,49 +1,5 @@
 const si = require("systeminformation");
 const ping = require("ping");
-const https = require("https");
-
-const axios = require("axios");
-
-async function getPublicIpAndVpnInfo() {
-  try {
-    const ipResponse = await axios.get("https://api.ipify.org?format=json");
-    const ipAddress = ipResponse.data.ip;
-    console.log(`Public IP Address: ${ipAddress}`);
-
-    const apiKey = "f7e4f0334814499e958bcf0ea939b2b5";
-    const vpnApiUrl = `https://vpnapi.io/api/${ipAddress}?key=${apiKey}`;
-    const vpnResponse = await axios.get(vpnApiUrl);
-    const vpnData = vpnResponse.data;
-    console.log("VPN API Data:", vpnData);
-
-    // Return the output of the vpnapi.io API
-    return vpnData;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error;
-  }
-}
-
-async function getNetworkInfo() {
-  return new Promise((resolve, reject) => {
-    const ipToken = "2d39a2ec2fdbb4";
-    https
-      .get(`https://ipinfo.io?token=${ipToken}`, (resp) => {
-        let data = "";
-
-        resp.on("data", (chunk) => {
-          data += chunk;
-        });
-
-        resp.on("end", () => {
-          resolve(JSON.parse(data));
-        });
-      })
-      .on("error", (err) => {
-        reject("Error: " + err.message);
-      });
-  });
-}
 
 async function calculatePacketLoss() {
   const host = "8.8.8.8";
@@ -89,27 +45,6 @@ async function calculateJitterAndLatency() {
   return { jitter: jitterAverage || 0, latency: latencyAverage || 0 };
 }
 
-async function getISPData() {
-  try {
-    const ipResponse = await axios.get("https://api.ipify.org?format=json");
-    const ipAddress = ipResponse.data.ip;
-    console.log(`Public IP Address: ${ipAddress}`);
-
-    const apiKey = "f7e4f0334814499e958bcf0ea939b2b5";
-    const vpnApiUrl = `https://vpnapi.io/api/${ipAddress}?key=${apiKey}`;
-    const vpnResponse = await axios.get(vpnApiUrl);
-    const vpnData = {};
-    vpnData.vpn = vpnResponse.data;
-    console.log("VPN API Data:", vpnData);
-
-    // Return the output of the vpnapi.io API
-    return vpnData;
-  } catch (error) {
-    console.error("Error fetching data:", error);
-    throw error;
-  }
-}
-
 async function getDynamicNetworkData() {
   try {
     const inetLatency = await si.inetLatency();
@@ -117,7 +52,7 @@ async function getDynamicNetworkData() {
     const systemInfo = await si.system();
     const uuid = systemInfo.uuid;
     const networkStats = await si.networkStats();
-    const pingResult = await ping.promise.probe("8.8.8.8");
+    const pingResult = await ping.promise.probe("8.8.8.8"); // Replace with your target IP address or hostname
     const jitterAndLatency = await calculateJitterAndLatency();
     const packetLossPercentage = await calculatePacketLoss();
 
@@ -144,5 +79,4 @@ async function getDynamicNetworkData() {
 
 module.exports = {
   getDynamicNetworkData,
-  getISPData,
 };

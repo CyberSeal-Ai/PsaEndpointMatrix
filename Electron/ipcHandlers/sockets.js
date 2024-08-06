@@ -2,15 +2,9 @@ const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const { DateTime } = require("luxon");
 const { get } = require("http");
-const fs = require("fs");
 
-const db = new sqlite3.Database("system_data.db", (err) => {
-  if (err) {
-    console.error("Error connecting to the database:", err);
-  } else {
-    console.log("Connected to the database");
-  }
-});
+const dbPath = path.join(__dirname, "system_data.db");
+const db = new sqlite3.Database(dbPath);
 
 async function getStaticCPUDetails() {
   try {
@@ -463,50 +457,6 @@ async function getStaticRAMData() {
   }
 }
 
-async function getBatteryData() {
-  try {
-    // Get the current time and the time 12 hours ago
-    const now = DateTime.now();
-    const twelveHoursAgo = now.minus({ hours: 12 });
-
-    // Fetch data from the past 12 hours
-    const results = await new Promise((resolve, reject) => {
-      const query = `
-        SELECT 
-          strftime('%Y-%m-%dT%H:%M:00', timestamp) AS bucketKey,
-          AVG(batteryPercentage) AS averageBatteryPercentage,
-          MAX(batteryStatus) AS batteryStatus
-        FROM battery_data
-        WHERE timestamp >= ?
-        GROUP BY strftime('%Y-%m-%dT%H', timestamp), (strftime('%M', timestamp) / 10)
-        ORDER BY bucketKey
-      `;
-      db.all(query, [twelveHoursAgo.toISO()], (err, rows) => {
-        if (err) {
-          return reject(err);
-        }
-        resolve(rows);
-      });
-    });
-
-    // Map the results to the desired output format
-    const batteryData = results.map((result) => ({
-      AverageBatteryPercentage: parseFloat(
-        result.averageBatteryPercentage
-      ).toFixed(2),
-      Timestamp: result.bucketKey,
-      BatteryStatus: result.batteryStatus,
-    }));
-
-    console.log(batteryData);
-    console.log("Battery Data");
-    return batteryData;
-  } catch (error) {
-    console.error("An error occurred:", error);
-    return null;
-  }
-}
-
 async function queryDatabase(query, params = []) {
   return new Promise((resolve, reject) => {
     db.all(query, params, (err, rows) => {
@@ -531,7 +481,7 @@ async function getUniqueInterfacesAndMostRecent() {
       try {
         interfaces = JSON.parse(row.Interfaces);
       } catch (err) {
-        console.error(`Failed to parse JSON: ${row.Interfaces}`);
+        console.error(`Failed to parse JSON: ${row.interfaces}`);
         return;
       }
 
@@ -541,24 +491,10 @@ async function getUniqueInterfacesAndMostRecent() {
         interfacesMap.set(ifaceName, {
           iface: interfaces.iface,
           ifaceName: interfaces.ifaceName,
-          default: interfaces.default,
-          ip4: interfaces.ip4,
-          ip4subnet: interfaces.ip4subnet,
-          ip6: interfaces.ip6,
-          ip6subnet: interfaces.ip6subnet,
-          mac: interfaces.mac,
-          internal: interfaces.internal,
-          virtual: interfaces.virtual,
-          operstate: interfaces.operstate,
-          type: interfaces.type,
-          duplex: interfaces.duplex,
-          mtu: interfaces.mtu,
-          speed: interfaces.speed,
-          dhcp: interfaces.dhcp,
+          IP4: interfaces.IP4,
+          IP6: interfaces.IP6,
           dnsSuffix: interfaces.dnsSuffix,
-          ieee8021xAuth: interfaces.ieee8021xAuth,
-          ieee8021xState: interfaces.ieee8021xState,
-          carrierChanges: interfaces.carrierChanges,
+          MacAddress: interfaces.macAddress,
           mostRecentTimestamp: DateTime.fromISO(row.timestamp),
         });
       } else {
@@ -567,6 +503,10 @@ async function getUniqueInterfacesAndMostRecent() {
 
         if (currentTimestamp > existingEntry.mostRecentTimestamp) {
           existingEntry.mostRecentTimestamp = currentTimestamp;
+          existingEntry.IP4 = interfaces.IP4;
+          existingEntry.IP6 = interfaces.IP6;
+          existingEntry.dnsSuffix = interfaces.dnsSuffix;
+          existingEntry.MacAddress = interfaces.macAddress;
         }
       }
     });
@@ -593,115 +533,23 @@ async function getUniqueInterfacesAndMostRecent() {
   }
 }
 
-async function getUniqueNetworkInfoAndMostRecent() {
+(async () => {
   try {
-    const results = await queryDatabase(`SELECT vpn, timestamp FROM isp_data`);
-
-    const networkInfoMap = new Map();
-
-    results.forEach((row) => {
-      let networkInfo;
-      try {
-        networkInfo = JSON.parse(row.vpn);
-      } catch (err) {
-        console.error(`Failed to parse JSON: ${row.vpn}`);
-        return;
-      }
-
-      const ip = networkInfo.ip;
-
-      if (!networkInfoMap.has(ip)) {
-        networkInfoMap.set(ip, {
-          ip: networkInfo.ip,
-          security: {
-            vpn: networkInfo.security.vpn,
-            proxy: networkInfo.security.proxy,
-            tor: networkInfo.security.tor,
-            relay: networkInfo.security.relay,
-          },
-          location: {
-            city: networkInfo.location.city,
-            region: networkInfo.location.region,
-            country: networkInfo.location.country,
-            continent: networkInfo.location.continent,
-            region_code: networkInfo.location.region_code,
-            country_code: networkInfo.location.country_code,
-            continent_code: networkInfo.location.continent_code,
-            latitude: networkInfo.location.latitude,
-            longitude: networkInfo.location.longitude,
-            time_zone: networkInfo.location.time_zone,
-            locale_code: networkInfo.location.locale_code,
-            metro_code: networkInfo.location.metro_code,
-            is_in_european_union: networkInfo.location.is_in_european_union,
-          },
-          network: {
-            network: networkInfo.network.network,
-            autonomous_system_number:
-              networkInfo.network.autonomous_system_number,
-            autonomous_system_organization:
-              networkInfo.network.autonomous_system_organization,
-          },
-          mostRecentTimestamp: DateTime.fromISO(row.timestamp),
-        });
-      } else {
-        const existingEntry = networkInfoMap.get(ip);
-        const currentTimestamp = DateTime.fromISO(row.timestamp);
-
-        if (currentTimestamp > existingEntry.mostRecentTimestamp) {
-          existingEntry.mostRecentTimestamp = currentTimestamp;
-        }
-      }
-    });
-
-    const uniqueNetworkInfo = Array.from(networkInfoMap.values());
-
-    let mostRecentNetworkInfo = null;
-
-    if (uniqueNetworkInfo.length > 0) {
-      mostRecentNetworkInfo = uniqueNetworkInfo.reduce((mostRecent, info) => {
-        return info.mostRecentTimestamp > mostRecent.mostRecentTimestamp
-          ? info
-          : mostRecent;
-      });
-    }
-
-    return { uniqueNetworkInfo, mostRecentNetworkInfo };
+    const { uniqueInterfaces, mostRecentInterface } =
+      await getUniqueInterfacesAndMostRecent();
+    console.log("Unique Interfaces:", uniqueInterfaces);
+    console.log("Most Recent Interface:", mostRecentInterface);
   } catch (error) {
-    console.error(
-      "An error occurred while extracting unique network info and the most recent one:",
-      error
-    );
-    return null;
+    console.error("An error occurred in the main execution:", error);
   }
-}
+})();
 
-async function getMostRecentTraceData() {
-  try {
-    const results = await queryDatabase(
-      `SELECT json_data, timestamp FROM trace_results ORDER BY timestamp DESC LIMIT 1`
-    );
-
-    if (results.length === 0) {
-      return null;
-    }
-
-    let traceData;
-    try {
-      traceData = JSON.parse(results[0].json_data);
-    } catch (err) {
-      console.error(`Failed to parse JSON: ${results[0].json_data}`);
-      return null;
-    }
-
-    return traceData;
-  } catch (error) {
-    console.error(
-      "An error occurred while extracting the most recent trace data:",
-      error
-    );
-    return null;
-  }
-}
+(async () => {
+  const { uniqueInterfaces, mostRecentInterface } =
+    await getUniqueInterfacesAndMostRecent();
+  console.log("Unique Interfaces:", uniqueInterfaces);
+  console.log("Most Recent Interface:", mostRecentInterface);
+})();
 
 async function getAllData() {
   try {
@@ -717,9 +565,6 @@ async function getAllData() {
       systemInfo,
       staticRAMData,
       InterfaceData,
-      ISPData,
-      BatteryData,
-      TraceData,
     ] = await Promise.all([
       getStaticCPUDetails(),
       getCurrentLoadData(),
@@ -732,9 +577,6 @@ async function getAllData() {
       getSystemInfo(),
       getStaticRAMData(),
       getUniqueInterfacesAndMostRecent(),
-      getUniqueNetworkInfoAndMostRecent(),
-      getBatteryData(),
-      getMostRecentTraceData(),
     ]);
 
     const accumulatedData = {
@@ -749,9 +591,6 @@ async function getAllData() {
       systemInfo,
       staticRAMData,
       InterfaceData,
-      ISPData,
-      BatteryData,
-      TraceData,
     };
 
     return accumulatedData;
@@ -760,12 +599,5 @@ async function getAllData() {
     return null;
   }
 }
-
-getAllData().then((data) => {
-  //store it in a output.json file
-
-  fs.writeFileSync("output.json", JSON.stringify(data, null, 2));
-  console.log("Data stored in output.json");
-});
 
 module.exports = { getAllData };

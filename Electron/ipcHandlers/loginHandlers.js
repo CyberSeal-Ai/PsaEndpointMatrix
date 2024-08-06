@@ -18,10 +18,6 @@ const loginIPC = (mainWindow) => {
   ipcMain.on("check-auth", (event) => {
     const clientId = store.get("appId");
     const secretKey = store.get("clientSecret");
-    const tenantId = store.get("tenantId");
-
-    console.log(tenantId);
-    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 
     if (clientId && secretKey) {
       const wsManager = WebSocketManager.getInstance();
@@ -30,8 +26,7 @@ const loginIPC = (mainWindow) => {
         const webSocketManager = new WebSocketManager(
           "wss://demo.ezaix.com/ws/endpointMetrics/",
           clientId,
-          secretKey,
-          tenantId
+          secretKey
         );
       }
 

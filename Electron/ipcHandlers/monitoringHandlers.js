@@ -1,25 +1,14 @@
 const { ipcMain } = require("electron");
 const { getStaticCPUData, getDynamicCPUData } = require("../dataMiners/cpu.js");
 const { getSystemInfo } = require("../dataMiners/system.js");
-const {
-  getDynamicNetworkData,
-  getISPData,
-} = require("../dataMiners/network.js");
+const { getDynamicNetworkData } = require("../dataMiners/network.js");
 const { getStaticRAMData, getDynamicRAMData } = require("../dataMiners/ram.js");
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
-const si = require("systeminformation");
-const { powerMonitor } = require("electron");
-const { Battery } = require("../dataMiners/battery.js");
-const { handleTraceData } = require("../dataMiners/trace.js");
 
-const db = new sqlite3.Database("system_data.db", (err) => {
-  if (err) {
-    console.error("Error connecting to the database:", err);
-  } else {
-    console.log("Connected to the database");
-  }
-});
+// Initialize SQLite database
+const dbPath = path.join(__dirname, "system_data.db");
+const db = new sqlite3.Database(dbPath);
 
 // Create tables if they don't exist
 db.serialize(() => {
@@ -130,28 +119,6 @@ db.serialize(() => {
       timestamp TEXT
     )
   `);
-  db.run(`
-    CREATE TABLE IF NOT EXISTS battery_data (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      batteryPercentage REAL,
-      batteryStatus TEXT,
-      timestamp TEXT
-    )
-  `);
-  db.run(`
-    CREATE TABLE IF NOT EXISTS trace_results (
-      sno INTEGER PRIMARY KEY AUTOINCREMENT,
-      json_data TEXT,
-      timestamp TEXT
-    )
-  `);
-  db.run(`
-    CREATE TABLE IF NOT EXISTS isp_data (
-      sno INTEGER PRIMARY KEY AUTOINCREMENT,
-      vpn TEXT,
-      timestamp TEXT
-    )
-  `);
 });
 
 const insertData = (table, data) => {
@@ -173,22 +140,6 @@ const insertData = (table, data) => {
           `Error inserting data into ${table}:`,
           err.message
         );
-      }
-    }
-  );
-};
-
-const insertTraceData = (jsonData) => {
-  const timestamp = new Date().toISOString();
-
-  db.run(
-    `INSERT INTO trace_results (json_data, timestamp) VALUES (?, ?)`,
-    [jsonData, timestamp],
-    function (err) {
-      if (err) {
-        console.error("Error inserting trace result:", err.message);
-      } else {
-        console.log("Trace result inserted successfully");
       }
     }
   );
@@ -224,35 +175,6 @@ const handleDynamicData = async () => {
   }
 };
 
-const handleIspData = async () => {
-  try {
-    const vpn = await getISPData();
-    insertData("isp_data", vpn);
-  } catch (error) {
-    console.error("Failed to handle ISP data:", error);
-  }
-};
-
-const handleBatteryData = async () => {
-  try {
-    const battery = await Battery();
-    insertData("battery_data", battery);
-  } catch (error) {
-    console.error("Failed to handle battery data:", error);
-  }
-};
-
-// Schedule the trace data collection every 90 minutes
-const handleTraceDataSchedule = async () => {
-  console.log("#######################################################");
-  const result = await handleTraceData();
-  if (result) {
-    const jsonData = JSON.stringify(result);
-    console.log("Trace data:", jsonData);
-    insertTraceData(jsonData);
-  }
-};
-
 const displayCollections = () => {
   const tables = [
     "static_cpu",
@@ -261,9 +183,6 @@ const displayCollections = () => {
     "static_ram",
     "dynamic_ram",
     "dynamic_network",
-    "battery_data",
-    "trace_results",
-    "isp_data",
   ];
 
   tables.forEach((table) => {
@@ -282,9 +201,6 @@ const displayCollections = () => {
 const monitorIPC = () => {
   let dynamicDataInterval;
   let staticDataInterval;
-  let batteryDataInterval;
-  let traceDataInterval;
-  let ispDataInterval;
 
   ipcMain.on("start-monitoring", async () => {
     console.log("Start monitoring data:");
@@ -292,35 +208,15 @@ const monitorIPC = () => {
     if (!dynamicDataInterval) {
       dynamicDataInterval = setInterval(async () => {
         await handleDynamicData();
-      }, 15000); // 15 seconds
+      }, 15000);
     }
 
     await handleStaticData();
-    await handleIspData();
-    await handleTraceDataSchedule();
 
     if (!staticDataInterval) {
       staticDataInterval = setInterval(async () => {
         await handleStaticData();
-      }, 60 * 60 * 1000); // 60 minutes
-    }
-
-    if (!batteryDataInterval) {
-      batteryDataInterval = setInterval(async () => {
-        await handleBatteryData();
-      }, 5 * 1000); // 5 seconds
-    }
-
-    if (!traceDataInterval) {
-      traceDataInterval = setInterval(async () => {
-        await handleTraceDataSchedule();
-      }, 60 * 1000 * 60); // 1 Hour
-    }
-
-    if (!ispDataInterval) {
-      ispDataInterval = setInterval(async () => {
-        await handleIspData();
-      }, 15 * 1000 * 60); // 10 minutes
+      }, 10 * 60 * 1000);
     }
   });
 
@@ -333,21 +229,6 @@ const monitorIPC = () => {
     if (staticDataInterval) {
       clearInterval(staticDataInterval);
       staticDataInterval = null;
-    }
-
-    if (batteryDataInterval) {
-      clearInterval(batteryDataInterval);
-      batteryDataInterval = null;
-    }
-
-    if (traceDataInterval) {
-      clearInterval(traceDataInterval);
-      traceDataInterval = null;
-    }
-
-    if (ispDataInterval) {
-      clearInterval(ispDataInterval);
-      ispDataInterval = null;
     }
   });
 };

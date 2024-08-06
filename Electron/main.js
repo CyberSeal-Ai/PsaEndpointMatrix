@@ -33,8 +33,7 @@ function createWindow() {
   //   ? "http://localhost:3000" // Dev mode URL
   //   : `file://${path.join(__dirname, "../Frontend/build/index.html")}`; // Prod mode URL
 
-  mainWindow.loadURL(`file://${path.join(__dirname, "./build/index.html")}`);
-  // mainWindow.loadURL("http://localhost:3001");
+  mainWindow.loadURL(`http://localhost:3000`);
 
   mainWindow.on("closed", () => {
     mainWindow = null;
