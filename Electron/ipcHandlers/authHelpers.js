@@ -48,14 +48,18 @@ async function fetchUserDetails(accessToken) {
 
 async function registerApplication(
   userPrincipalName,
+  userId,
   accessToken,
   tenantId,
   webContents
 ) {
-  const apiUrl = new URL("http://localhost:5000/endpointMetrics/Register");
+  const apiUrl = new URL(
+    "https://demo.ezaix.com/backend/endpointMetrics/Register"
+  );
   apiUrl.searchParams.append("userPrincipalName", userPrincipalName);
   apiUrl.searchParams.append("MStoken", accessToken);
   apiUrl.searchParams.append("tenantid", tenantId);
+  apiUrl.searchParams.append("userId", userId);
 
   try {
     const response = await fetch(apiUrl.toString());
@@ -77,7 +81,7 @@ async function registerApplication(
 
       // Establish WebSocket connection
       const webSocketManager = new WebSocketManager(
-        "ws://localhost:5000/ws/endpointMetrics/",
+        "wss://demo.ezaix.com/ws/endpointMetrics/",
         data.Data.appId,
         data.Data.clientSecret,
         tenantId
@@ -118,6 +122,7 @@ async function exchangeCodeForTokens(code, webContents) {
       if (tenantId && userDetails) {
         registerApplication(
           userDetails.userPrincipalName,
+          userDetails.userId,
           access_token,
           tenantId,
           webContents

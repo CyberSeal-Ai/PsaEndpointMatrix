@@ -1,12 +1,22 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Button, Typography, Box } from "@mui/material";
+import { Typography, Box } from "@mui/material";
+import logo from "./whiteEzaix.png";
+import styled from "styled-components";
+import Siriwave from "react-siriwave";
 import "./App.css";
+import "@fontsource/poppins"; // Defaults to weight 400
+import "@fontsource/poppins/400.css"; // Specify weight
+import "@fontsource/poppins/500.css"; // Specify additional weights if needed
+import "@fontsource/poppins/700.css"; // Specify additional weights if needed
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("Checking...");
   const [monitoringStatus, setMonitoringStatus] = useState(false);
   const [connectionStatusBoolean, setConnectionStatusBoolean] = useState(false);
+  const StyledImage = styled.img`
+    height: 80px;
+  `;
 
   const startMonitoring = async () => {
     window.electron.send("start-monitoring");
@@ -88,71 +98,150 @@ function App() {
   return (
     <div className="App">
       {isAuthenticated ? (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          minHeight="100vh"
-        >
-          <Typography variant="h4" gutterBottom>
-            Endpoint Metrics
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Connection status with PSA: {connectionStatus}
-          </Typography>
-          <Box mt={2} display="flex" gap={2}>
-            {monitoringStatus ? (
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={handleStopMonitoring}
+        <>
+          <div className="Main-container">
+            <div
+              className="Constant"
+              style={{ margin: "auto", marginLeft: "50px" }}
+            >
+              <Typography
+                variant="h2"
+                style={{
+                  fontFamily: "Poppins",
+                  color: "white",
+                }}
+                textAlign={"center"}
               >
-                Stop Monitoring
-              </Button>
-            ) : (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={startMonitoring}
+                Ezaix
+              </Typography>
+              <Typography
+                variant="h6"
+                gutterBottom
+                style={{ fontFamily: "Poppins" }}
+                textAlign={"center"}
               >
-                Start Monitoring
-              </Button>
-            )}
-            {connectionStatus !== "Live" && (
-              <Button
-                variant="contained"
-                color="info"
-                onClick={checkConnection}
+                Endpoint Agent
+              </Typography>
+            </div>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              justifyContent="center"
+              height={"100%"}
+              style={{ padding: "0 70px", fontFamily: "Poppins" }}
+            >
+              <Typography
+                variant="subtitle1"
+                gutterBottom
+                style={{ fontFamily: "Poppins" }}
               >
-                Force Connect
-              </Button>
-            )}
+                {connectionStatus == "Live" ? (
+                  <>
+                    Connection : {"  "}
+                    <span className="status-dot"></span>
+                    {"  "}
+                    {connectionStatus}
+                  </>
+                ) : (
+                  <>
+                    <span className="status-dot-offline"></span>
+                    {"  "}
+                    {connectionStatus}
+                  </>
+                )}
+              </Typography>
+              <div
+                style={{
+                  marginTop: "16px",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "16px",
+                }}
+              >
+                {monitoringStatus ? (
+                  <button
+                    className="button stop-button"
+                    onClick={handleStopMonitoring}
+                  >
+                    Stop Monitoring
+                  </button>
+                ) : (
+                  <button
+                    className="button start-button"
+                    onClick={startMonitoring}
+                  >
+                    Start Monitoring
+                  </button>
+                )}
+                {connectionStatus !== "Live" && (
+                  <button
+                    className="button force-connect-button"
+                    onClick={checkConnection}
+                  >
+                    Force Connect
+                  </button>
+                )}
 
-            <Button variant="outlined" color="warning" onClick={handleSignOut}>
-              Sign Out
-            </Button>
-          </Box>
-        </Box>
+                <button
+                  className="button sign-out-button"
+                  onClick={handleSignOut}
+                >
+                  Sign Out
+                </button>
+              </div>
+            </Box>
+          </div>
+          <Siriwave
+            height={100}
+            width={window.innerWidth}
+            theme="ios9"
+            speed={0.2}
+            amplitude={2.5}
+            frequency={4.5}
+            color="#fff"
+          />
+        </>
       ) : (
-        <Box
-          className="App"
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          minHeight="100vh"
-        >
-          <Typography variant="h4" gutterBottom>
-            Endpoint Metrics {/* Replace with your actual app name */}
-          </Typography>
-          <Typography variant="subtitle1" gutterBottom>
-            Please sign in to continue
-          </Typography>
-          <Button variant="contained" color="primary" onClick={handleLogin}>
-            Login with Microsoft
-          </Button>
-        </Box>
+        <>
+          <div
+            className="Constant"
+            style={{
+              margin: "auto",
+              textAlign: "center",
+              paddingTop: "70px",
+              height: "100vh",
+            }}
+          >
+            <div>
+              <Typography
+                variant="h1"
+                gutterBottom
+                style={{
+                  fontFamily: "Poppins",
+                  color: "white",
+                }}
+                textAlign={"center"}
+              >
+                Ezaix
+              </Typography>
+            </div>
+            <Typography
+              variant="h6"
+              gutterBottom
+              style={{
+                fontFamily: "Poppins",
+                color: "grey",
+              }}
+              textAlign={"center"}
+            >
+              Endpoint Agent
+            </Typography>
+            <button className="button login-button" onClick={handleLogin}>
+              Sign In
+            </button>
+          </div>
+        </>
       )}
     </div>
   );

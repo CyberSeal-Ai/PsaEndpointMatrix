@@ -1,7 +1,7 @@
 const si = require("systeminformation");
 const ping = require("ping");
 const https = require("https");
-
+const WebSocketManager = require("../ipcHandlers/socketsHandler");
 const axios = require("axios");
 
 async function getPublicIpAndVpnInfo() {
@@ -101,8 +101,15 @@ async function getISPData() {
     const vpnData = {};
     vpnData.vpn = vpnResponse.data;
     console.log("VPN API Data:", vpnData);
+    const wsManager = WebSocketManager.getInstance();
+    if (wsManager && wsManager.isConnected()) {
+      wsManager.sendISPdata(vpnData);
+    } else {
+      console.error(
+        "WebSocketManager instance is not available or the socket is not connected."
+      );
+    }
 
-    // Return the output of the vpnapi.io API
     return vpnData;
   } catch (error) {
     console.error("Error fetching data:", error);

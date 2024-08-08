@@ -28,7 +28,7 @@ const loginIPC = (mainWindow) => {
 
       if (!wsManager || !wsManager.isConnected()) {
         const webSocketManager = new WebSocketManager(
-          "ws://localhost:5000/ws/endpointMetrics/",
+          "wss://demo.ezaix.com/ws/endpointMetrics/",
           clientId,
           secretKey,
           tenantId
@@ -61,7 +61,7 @@ const loginIPC = (mainWindow) => {
     console.log("Login requested !!!");
 
     const authWindow = new BrowserWindow({
-      width: 500,
+      width: 650,
       height: 500,
       webPreferences: {
         nodeIntegration: false,

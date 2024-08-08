@@ -5,7 +5,7 @@ const { getAllData } = require("./sockets"); // Update with the correct path to 
 class WebSocketManager {
   static instance = null;
 
-  constructor(url, appId, secretKey, tenantId, retryInterval = 2000) {
+  constructor(url, appId, secretKey, tenantId, retryInterval = 1000) {
     this.url = url;
     this.appId = appId;
     this.secretKey = secretKey;
@@ -98,12 +98,32 @@ class WebSocketManager {
 
   async handleGetEndpointMetrics(data) {
     const upn = this.store.get("userPrincipalName"); // Assuming upn is stored
+    const type = "endpoint_metrics";
     if (data.data === upn) {
       console.log("Request for metrics received for current user.");
       const metricsData = await getAllData();
       console.log("Metrics data sent:", metricsData);
-      this.send({ type: "DatatoRender", data: metricsData, upn: upn });
+      this.send({
+        type: "DatatoRender",
+        data: metricsData,
+        upn: upn,
+        msgtype: type,
+      });
     }
+  }
+
+  async sendISPdata(data) {
+    const upn = this.store.get("userPrincipalName");
+    const tenant_id = this.store.get("tenantId");
+    const type = "ISPdata";
+    console.log("Request for ISP data received for current user.");
+    this.send({
+      type: "DatatoRender",
+      data: data,
+      upn: upn,
+      msgtype: type,
+      tenant_id: tenant_id,
+    });
   }
 
   send(data) {

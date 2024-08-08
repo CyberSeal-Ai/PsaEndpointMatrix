@@ -1,11 +1,11 @@
 {
-  "name": "Ezaix-Endpoint-Metrics",
-  "version": "2.0.0",
+  "name": "Endpoint-Metrics-Testing-v2",
+  "version": "2.1.1",
   "author": {
-    "name": "Ezaix",
-    "email": "info@cybersealai.com",
-    "url": "https://ezaix.com/",
-    "company": "Ezaix"
+    "name": "Ezaix Testing v2",
+    "email": "sudarsa@ezaix.com",
+    "url": "ezaixEndpointTesting.com",
+    "company": "Ezaix Techn"
   },
   "main": "main.js",
   "scripts": {
@@ -16,10 +16,10 @@
     "build:linux": "electron-builder --linux"
   },
   "build": {
-    "appId": "com.ezaix.endpointmetrics",
-    "productName": "Ezaix Endpoint-Metrics",
+    "appId": "com.v3ezaix.endpointmetrics",
+    "productName": "Endpoint-Metrics-Ezaix V2.2",
     "directories": {
-      "output": "release-builds"
+      "output": "release-builds-6"
     },
     "files": [
       "build/**/*",
