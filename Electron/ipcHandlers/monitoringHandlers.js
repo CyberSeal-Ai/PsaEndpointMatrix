@@ -12,6 +12,7 @@ const si = require("systeminformation");
 const { powerMonitor } = require("electron");
 const { Battery } = require("../dataMiners/battery.js");
 const { handleTraceData } = require("../dataMiners/trace.js");
+const WebSocketManager = require("./socketsHandler");
 
 const db = new sqlite3.Database("system_data.db", (err) => {
   if (err) {
@@ -285,6 +286,7 @@ const monitorIPC = () => {
   let batteryDataInterval;
   let traceDataInterval;
   let ispDataInterval;
+  let pingInterval;
 
   ipcMain.on("start-monitoring", async () => {
     console.log("Start monitoring data:");
@@ -297,7 +299,6 @@ const monitorIPC = () => {
 
     await handleStaticData();
     await handleIspData();
-    await handleTraceDataSchedule();
 
     if (!staticDataInterval) {
       staticDataInterval = setInterval(async () => {
@@ -308,7 +309,7 @@ const monitorIPC = () => {
     if (!batteryDataInterval) {
       batteryDataInterval = setInterval(async () => {
         await handleBatteryData();
-      }, 5 * 1000); // 5 seconds
+      }, 60 * 1000); // 5 seconds
     }
 
     if (!traceDataInterval) {
@@ -320,7 +321,25 @@ const monitorIPC = () => {
     if (!ispDataInterval) {
       ispDataInterval = setInterval(async () => {
         await handleIspData();
-      }, 15 * 1000 * 60); // 10 minutes
+      }, 45 * 1000 * 60); // 15 minutes
+    }
+
+    if (!pingInterval) {
+      pingInterval = setInterval(async () => {
+        try {
+          const wsManager = WebSocketManager.getInstance();
+          if (wsManager && wsManager.isConnected()) {
+            await wsManager.ping();
+            console.log("Ping sent to the server.");
+          } else {
+            console.error(
+              "WebSocketManager instance is not available or the socket is not connected."
+            );
+          }
+        } catch (error) {
+          console.error("Error during WebSocket ping operation:", error);
+        }
+      }, 30 * 1000);
     }
   });
 
@@ -348,6 +367,11 @@ const monitorIPC = () => {
     if (ispDataInterval) {
       clearInterval(ispDataInterval);
       ispDataInterval = null;
+    }
+
+    if (pingInterval) {
+      clearInterval(pingInterval);
+      pingInterval = null;
     }
   });
 };

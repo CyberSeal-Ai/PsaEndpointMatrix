@@ -73,6 +73,10 @@ class WebSocketManager {
         this.handleGetEndpointMetrics(data);
       }
 
+      if (data.message === "GetActiveUsers") {
+        this.ping();
+      }
+
       // Compare incoming data fields with Electron store values
       const storedAppId = this.store.get("appId");
       const storedClientSecret = this.store.get("clientSecret");
@@ -104,7 +108,6 @@ class WebSocketManager {
       const metricsData = await getAllData();
       console.log("Metrics data sent:", metricsData);
       this.send({
-        type: "DatatoRender",
         data: metricsData,
         upn: upn,
         msgtype: type,
@@ -118,11 +121,23 @@ class WebSocketManager {
     const type = "ISPdata";
     console.log("Request for ISP data received for current user.");
     this.send({
-      type: "DatatoRender",
       data: data,
       upn: upn,
       msgtype: type,
       tenant_id: tenant_id,
+    });
+  }
+
+  async ping() {
+    const upn = this.store.get("userPrincipalName");
+    const tenant_id = this.store.get("tenantId");
+    const userId = this.store.get("userDetails").userId;
+    const type = "Ping";
+    this.send({
+      upn: upn,
+      msgtype: type,
+      tenant_id: tenant_id,
+      userId: userId,
     });
   }
 
