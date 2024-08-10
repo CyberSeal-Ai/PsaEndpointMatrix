@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Typography, Box } from "@mui/material";
-import logo from "./whiteEzaix.png";
 import styled from "styled-components";
 import Siriwave from "react-siriwave";
 import "./App.css";
@@ -8,11 +7,13 @@ import "@fontsource/poppins"; // Defaults to weight 400
 import "@fontsource/poppins/400.css"; // Specify weight
 import "@fontsource/poppins/500.css"; // Specify additional weights if needed
 import "@fontsource/poppins/700.css"; // Specify additional weights if needed
+import base64Image from "./imageScript";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState("Checking...");
   const [monitoringStatus, setMonitoringStatus] = useState(false);
+
   const [connectionStatusBoolean, setConnectionStatusBoolean] = useState(false);
   const StyledImage = styled.img`
     height: 80px;
@@ -104,16 +105,7 @@ function App() {
               className="Constant"
               style={{ margin: "auto", marginLeft: "50px" }}
             >
-              <Typography
-                variant="h2"
-                style={{
-                  fontFamily: "Poppins",
-                  color: "white",
-                }}
-                textAlign={"center"}
-              >
-                Ezaix
-              </Typography>
+              <StyledImage src={base64Image} alt="Ezaix Logo" />
               <Typography
                 variant="h6"
                 gutterBottom

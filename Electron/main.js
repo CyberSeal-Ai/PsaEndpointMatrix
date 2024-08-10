@@ -14,7 +14,7 @@ let mainWindow;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
-    width: 600,
+    width: 650,
     height: 400,
     autoHideMenuBar: true,
     // frame: false,
@@ -32,6 +32,7 @@ function createWindow() {
   //   : `file://${path.join(__dirname, "../Frontend/build/index.html")}`; // Prod mode URL
 
   mainWindow.loadURL(`file://${path.join(__dirname, "./build/index.html")}`);
+  // mainWindow.loadURL("http://localhost:3000");
 
   mainWindow.on("closed", () => {
     mainWindow = null;
