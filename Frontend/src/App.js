@@ -206,17 +206,7 @@ function App() {
             }}
           >
             <div>
-              <Typography
-                variant="h1"
-                gutterBottom
-                style={{
-                  fontFamily: "Poppins",
-                  color: "white",
-                }}
-                textAlign={"center"}
-              >
-                Ezaix
-              </Typography>
+              <StyledImage src={base64Image} alt="Ezaix Logo" />
             </div>
             <Typography
               variant="h6"

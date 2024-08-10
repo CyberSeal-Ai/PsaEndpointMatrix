@@ -28,7 +28,7 @@ const loginIPC = (mainWindow) => {
 
       if (!wsManager || !wsManager.isConnected()) {
         const webSocketManager = new WebSocketManager(
-          "ws://localhost:5000/ws/endpointMetrics/",
+          "wss://demo.ezaix.com/ws/endpointMetrics/",
           clientId,
           secretKey,
           tenantId
