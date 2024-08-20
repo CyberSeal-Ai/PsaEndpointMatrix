@@ -41,7 +41,7 @@
         "dmg",
         "zip"
       ],
-      "artifactName": "${productName}-v${version}-mac.${ext}"
+      "artifactName": "${EndpointMetricsv1}-v${2.1.4}-mac.${dmg}"
     },
     "dmg": {
       "icon": "./Icons/EndpointMetricsv1.icns",
