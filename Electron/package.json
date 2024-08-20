@@ -1,11 +1,11 @@
 {
-  "name": "Endpoint-Metrics-Testing-v2",
-  "version": "2.1.1",
+  "name": "Endpoint-Metrics-Testing-v2.1.4",
+  "version": "2.1.4",
   "author": {
-    "name": "Ezaix Testing v2",
+    "name": "Ezaix Testing v2.1",
     "email": "sudarsa@ezaix.com",
     "url": "ezaixEndpointTesting.com",
-    "company": "Ezaix Techn"
+    "company": "Ezaix Technologies"
   },
   "main": "main.js",
   "scripts": {
@@ -16,10 +16,10 @@
     "build:linux": "electron-builder --linux"
   },
   "build": {
-    "appId": "com.v3ezaix.endpointmetrics",
-    "productName": "Endpoint-Metrics-Ezaix V2.2",
+    "appId": "com.v2.1.4ezaix.endpointmetrics",
+    "productName": "Endpoint-Metrics-Ezaix V2.1.4",
     "directories": {
-      "output": "release-builds-6"
+      "output": "release-builds-4-mac"
     },
     "files": [
       "build/**/*",
@@ -35,7 +35,33 @@
       "icon": "./Icons/Modified.ico"
     },
     "mac": {
-      "icon": "./Icons/EndpointMetricsv1.icns"
+      "icon": "./Icons/EndpointMetricsv1.icns",
+      "category": "public.app-category.utilities",
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "artifactName": "${EndpointMetricsAgent}-v${2.1.4}-mac.${dmg}"
+    },
+    "dmg": {
+      "icon": "./Icons/EndpointMetricsv1.icns",
+      "iconSize": 100,
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
     },
     "linux": {
       "icon": "./Icons/Modified.png"
@@ -45,6 +71,7 @@
     "axios": "^1.6.7",
     "battery-level": "^3.0.0",
     "electron-store": "^8.1.0",
+    "ezaixlogo": "^1.0.0",
     "fast-speedtest-api": "^0.3.2",
     "fs": "^0.0.1-security",
     "luxon": "^3.4.4",
