@@ -33,6 +33,14 @@
     {
       "CurrentLoad": "7.45",
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "CurrentLoad": "8.81",
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "CurrentLoad": "7.71",
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "memoryUsageData": [
@@ -71,6 +79,18 @@
       "FreeSpace": "3.09",
       "UsedSpace": "12.24",
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "0.86",
+      "UsedSpace": "14.47",
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "TotalUsed": "15.33",
+      "FreeSpace": "1.00",
+      "UsedSpace": "14.33",
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "networkTrafficData": [
@@ -103,6 +123,16 @@
       "TxBytes": 9910574441,
       "RxBytes": 65823522197,
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "TxBytes": 10445016,
+      "RxBytes": 171301337,
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "TxBytes": 165007305,
+      "RxBytes": 2592593517,
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "downloadSpeedData": [
@@ -113,6 +143,10 @@
     {
       "AverageDownloadSpeed": "6.06",
       "Timestamp": "2024-08-01T08:00:00"
+    },
+    {
+      "AverageDownloadSpeed": "0.82",
+      "Timestamp": "2024-08-01T09:00:00"
     }
   ],
   "packetLossPercentageData": [
@@ -139,6 +173,14 @@
     {
       "PacketLossPercentage": "0.00",
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "PacketLossPercentage": "0.00",
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "PacketLossPercentage": "0.00",
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "jitterData": [
@@ -165,6 +207,14 @@
     {
       "Jitter": "0.92",
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "Jitter": "1.56",
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "Jitter": "2.41",
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "latencyData": [
@@ -191,10 +241,18 @@
     {
       "Latency": "25.39",
       "Timestamp": "2024-08-01T08:40:00"
+    },
+    {
+      "Latency": "9.00",
+      "Timestamp": "2024-08-01T09:09:00"
+    },
+    {
+      "Latency": "33.27",
+      "Timestamp": "2024-08-01T09:10:00"
     }
   ],
   "systemInfo": {
-    "macs": "[\"00:15:5d:47:ea:53\",\"00:15:5d:e1:66:ff\",\"90:e8:68:f2:62:b7\"]",
+    "macs": "[\"00:15:5d:47:ea:53\",\"00:15:5d:80:85:c8\",\"90:e8:68:f2:62:b7\"]",
     "platform": "win32",
     "architecture": "x64",
     "hostName": "SR71",
@@ -231,7 +289,7 @@
         "ieee8021xAuth": "Not defined",
         "ieee8021xState": "Disabled",
         "carrierChanges": 0,
-        "mostRecentTimestamp": "2024-08-01T14:14:29.840+05:30"
+        "mostRecentTimestamp": "2024-08-01T14:43:33.608+05:30"
       },
       {
         "iface": "vEthernet (Default Switch)",
@@ -278,7 +336,7 @@
       "ieee8021xAuth": "Not defined",
       "ieee8021xState": "Disabled",
       "carrierChanges": 0,
-      "mostRecentTimestamp": "2024-08-01T14:14:29.840+05:30"
+      "mostRecentTimestamp": "2024-08-01T14:43:33.608+05:30"
     }
   },
   "ISPData": {
@@ -401,7 +459,7 @@
           "autonomous_system_number": "AS131226",
           "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
         },
-        "mostRecentTimestamp": "2024-08-01T14:00:44.464+05:30"
+        "mostRecentTimestamp": "2024-08-01T14:39:28.205+05:30"
       }
     ],
     "mostRecentNetworkInfo": {
@@ -432,36 +490,10 @@
         "autonomous_system_number": "AS131226",
         "autonomous_system_organization": "Indian Institute Of Technology Roorkee"
       },
-      "mostRecentTimestamp": "2024-08-01T14:00:44.464+05:30"
+      "mostRecentTimestamp": "2024-08-01T14:39:28.205+05:30"
     }
   },
-  "BatteryData": [
-    {
-      "AverageBatteryPercentage": "98.50",
-      "Timestamp": "2024-08-01T08:00:00",
-      "BatteryStatus": "on-ac"
-    },
-    {
-      "AverageBatteryPercentage": "99.53",
-      "Timestamp": "2024-08-01T08:10:00",
-      "BatteryStatus": "on-ac"
-    },
-    {
-      "AverageBatteryPercentage": "100.00",
-      "Timestamp": "2024-08-01T08:20:00",
-      "BatteryStatus": "on-ac"
-    },
-    {
-      "AverageBatteryPercentage": "99.17",
-      "Timestamp": "2024-08-01T08:30:00",
-      "BatteryStatus": "on-ac"
-    },
-    {
-      "AverageBatteryPercentage": "100.00",
-      "Timestamp": "2024-08-01T08:40:00",
-      "BatteryStatus": "on-ac"
-    }
-  ],
+  "BatteryData": [],
   "TraceData": {
     "destination": "52.114.229.11",
     "target": "a-tr-teamsc-swcn-06.swedencentral.cloudapp.azure.com",
