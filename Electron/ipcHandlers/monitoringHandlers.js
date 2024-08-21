@@ -309,7 +309,7 @@ const monitorIPC = () => {
     if (!batteryDataInterval) {
       batteryDataInterval = setInterval(async () => {
         await handleBatteryData();
-      }, 60 * 1000); // 5 seconds
+      }, 1000); // 5 seconds
     }
 
     if (!traceDataInterval) {

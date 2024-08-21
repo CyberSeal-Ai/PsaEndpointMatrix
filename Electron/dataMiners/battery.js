@@ -4,8 +4,6 @@ const batteryLevel = require("battery-level");
 async function getBatteryPercentage() {
   try {
     const batteryPercentage = (await batteryLevel()) * 100;
-    console.log("Battery percentage:", batteryPercentage);
-
     return batteryPercentage;
   } catch (err) {
     console.error("Error getting battery percentage:", err);
@@ -24,6 +22,8 @@ async function Battery() {
     batteryPercentage: await getBatteryPercentage(),
     batteryStatus: await monitorBatteryOnPower(),
   };
+
+  console.log("Battery Data : ", data);
 
   return data;
 }
