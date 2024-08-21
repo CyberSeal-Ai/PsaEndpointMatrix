@@ -216,15 +216,15 @@ const handleStaticData = async () => {
 const handleDynamicData = async () => {
   try {
     const dynamicCPUData = await getDynamicCPUData();
-    console.log("Dynamic CPU Data : ", dynamicCPUData);
+    // console.log("Dynamic CPU Data : ", dynamicCPUData);
     insertData("dynamic_cpu", dynamicCPUData);
 
     const dynamicRAMData = await getDynamicRAMData();
-    console.log("Dynamic RAM Data : ", dynamicRAMData);
+    // console.log("Dynamic RAM Data : ", dynamicRAMData);
     insertData("dynamic_ram", dynamicRAMData);
 
     const dynamicNetworkData = await getDynamicNetworkData();
-    console.log("Dynamic Network Data : ", dynamicNetworkData);
+    // console.log("Dynamic Network Data : ", dynamicNetworkData);
     insertData("dynamic_network", dynamicNetworkData);
   } catch (error) {
     console.error("Failed to handle dynamic data:", error);
@@ -244,7 +244,7 @@ const handleIspData = async () => {
 const handleBatteryData = async () => {
   try {
     const battery = await Battery();
-    console.log("Battery Data : ", battery);
+    // console.log("Battery Data : ", battery);
     insertData("battery_data", battery);
   } catch (error) {
     console.error("Failed to handle battery data:", error);
@@ -317,7 +317,7 @@ const monitorIPC = () => {
     if (!batteryDataInterval) {
       batteryDataInterval = setInterval(async () => {
         await handleBatteryData();
-      }, 1000); // 5 seconds
+      }, 60 * 1000); // 5 seconds
     }
 
     if (!traceDataInterval) {
