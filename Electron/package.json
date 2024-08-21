@@ -35,7 +35,7 @@
       "icon": "./Icons/Modified.ico"
     },
     "mac": {
-      "icon": "./Icons/EndpointMetricsv1.icns",
+      "icon": "./Icons/mac.icns",
       "category": "public.app-category.utilities",
       "target": [
         "dmg",
@@ -44,7 +44,7 @@
       "artifactName": "${EndpointMetricsv1}-v${2.1.4}-mac.${dmg}"
     },
     "dmg": {
-      "icon": "./Icons/EndpointMetricsv1.icns",
+      "icon": "./Icons/mac.icns",
       "iconSize": 100,
       "contents": [
         {
