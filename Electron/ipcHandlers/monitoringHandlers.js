@@ -306,6 +306,7 @@ const monitorIPC = () => {
 
     await handleStaticData();
     await handleIspData();
+    await handleTraceDataSchedule();
 
     if (!staticDataInterval) {
       staticDataInterval = setInterval(async () => {
