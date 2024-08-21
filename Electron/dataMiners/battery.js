@@ -1,10 +1,9 @@
-const { powerMonitor } = require("electron");
-const batteryLevel = require("battery-level");
+const si = require("systeminformation");
 
 async function getBatteryPercentage() {
   try {
-    const batteryPercentage = (await batteryLevel()) * 100;
-    return batteryPercentage;
+    const battery = await si.battery();
+    return battery.percent; // This gives the battery percentage
   } catch (err) {
     console.error("Error getting battery percentage:", err);
     return null;
@@ -13,12 +12,18 @@ async function getBatteryPercentage() {
 
 // Function to monitor battery power status
 async function monitorBatteryOnPower() {
-  return powerMonitor.isOnBatteryPower() ? "on-battery" : "on-ac";
+  try {
+    const battery = await si.battery();
+    return battery.isCharging ? "on-ac" : "on-battery";
+  } catch (err) {
+    console.error("Error getting battery status:", err);
+    return "unknown";
+  }
 }
 
 // Battery class constructor
 async function Battery() {
-  data = {
+  const data = {
     batteryPercentage: await getBatteryPercentage(),
     batteryStatus: await monitorBatteryOnPower(),
   };
