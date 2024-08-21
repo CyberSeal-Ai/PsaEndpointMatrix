@@ -198,12 +198,15 @@ const insertTraceData = (jsonData) => {
 const handleStaticData = async () => {
   try {
     const staticCPUData = await getStaticCPUData();
+    console.log("Static CPU Data : ", staticCPUData);
     insertData("static_cpu", staticCPUData);
 
     const systemInfo = await getSystemInfo();
+    console.log("System Info : ", systemInfo);
     insertData("system_info", systemInfo);
 
     const staticRAMData = await getStaticRAMData();
+    console.log("Static RAM Data : ", staticRAMData);
     insertData("static_ram", staticRAMData);
   } catch (error) {
     console.error("Failed to handle static data:", error);
@@ -213,12 +216,15 @@ const handleStaticData = async () => {
 const handleDynamicData = async () => {
   try {
     const dynamicCPUData = await getDynamicCPUData();
+    console.log("Dynamic CPU Data : ", dynamicCPUData);
     insertData("dynamic_cpu", dynamicCPUData);
 
     const dynamicRAMData = await getDynamicRAMData();
+    console.log("Dynamic RAM Data : ", dynamicRAMData);
     insertData("dynamic_ram", dynamicRAMData);
 
     const dynamicNetworkData = await getDynamicNetworkData();
+    console.log("Dynamic Network Data : ", dynamicNetworkData);
     insertData("dynamic_network", dynamicNetworkData);
   } catch (error) {
     console.error("Failed to handle dynamic data:", error);
@@ -228,6 +234,7 @@ const handleDynamicData = async () => {
 const handleIspData = async () => {
   try {
     const vpn = await getISPData();
+    console.log("VPN Data : ", vpn);
     insertData("isp_data", vpn);
   } catch (error) {
     console.error("Failed to handle ISP data:", error);
@@ -237,6 +244,7 @@ const handleIspData = async () => {
 const handleBatteryData = async () => {
   try {
     const battery = await Battery();
+    console.log("Battery Data : ", battery);
     insertData("battery_data", battery);
   } catch (error) {
     console.error("Failed to handle battery data:", error);
@@ -245,7 +253,6 @@ const handleBatteryData = async () => {
 
 // Schedule the trace data collection every 90 minutes
 const handleTraceDataSchedule = async () => {
-  console.log("#######################################################");
   const result = await handleTraceData();
   if (result) {
     const jsonData = JSON.stringify(result);

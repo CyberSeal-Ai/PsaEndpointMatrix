@@ -28,8 +28,6 @@ async function Battery() {
     batteryStatus: await monitorBatteryOnPower(),
   };
 
-  console.log("Battery Data : ", data);
-
   return data;
 }
 
