@@ -23,9 +23,12 @@ awk.on("close", (code) => {
   }
 
   try {
-    // Remove any trailing comma before the closing bracket
-    outputData = outputData.replace(/,\s*\]$/, "]");
+    // Clean up the output: remove trailing commas and extra newlines
+    outputData = outputData.replace(/,\s*]$/, "]");
+
+    // Parse the cleaned data
     const jsonData = JSON.parse(outputData);
+
     console.log("Parsed JSON Output:", JSON.stringify(jsonData, null, 2));
   } catch (error) {
     console.error("Failed to parse JSON data:", error);
