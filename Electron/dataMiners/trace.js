@@ -23,12 +23,12 @@ sed.stdout.on("data", async (data) => {
       // console.log(`IP: ${item.ip}, Location: ${JSON.stringify(locationData)}`);
       
     } catch (error) {
-      console.error(`Error fetching data for IP: ${item.ip}`, error);
+      // console.error(`Error fetching data for IP: ${item.ip}`, error);
     }
   }
 
 
-  console.log("Enriched JSON Output:\n", JSON.stringify(jsonData, null, 2));
+  // console.log("Enriched JSON Output:\n", JSON.stringify(jsonData, null, 2));
 });
 
 sed.stderr.on("data", (data) => {
