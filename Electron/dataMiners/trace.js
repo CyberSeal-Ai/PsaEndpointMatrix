@@ -28,7 +28,7 @@ sed.stdout.on("data", async (data) => {
   }
 
 
-  // console.log("Enriched JSON Output:\n", JSON.stringify(jsonData, null, 2));
+  console.log("Enriched JSON Output:\n", JSON.stringify(jsonData, null, 2));
 });
 
 sed.stderr.on("data", (data) => {
@@ -43,7 +43,7 @@ sed.on("close", (code) => {
 
 async function getPublicIpAndVpnInfo(ipAddress) {
   try {
-    const apiKey = "f7e4f0334814499e958bcf0ea939b2b5";
+    const apiKey = "128857bed95c480486c322ad72aa37cf";
     const vpnApiUrl = `https://vpnapi.io/api/${ipAddress}?key=${apiKey}`;
     const vpnResponse = await axios.get(vpnApiUrl);
     const vpnData = vpnResponse.data;
