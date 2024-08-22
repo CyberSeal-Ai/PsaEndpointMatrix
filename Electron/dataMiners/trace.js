@@ -11,8 +11,8 @@ traceroute.stdout.pipe(awk.stdin);
 awk.stdout.pipe(sed.stdin);
 
 sed.stdout.on("data", async (data) => {
-  console.log("Raw JSON Output:\n", data.toString());
-  // console.log(data)
+  // console.log("Raw JSON Output:\n", data.toString());
+  console.log(data)
   const jsonData = data
 
   // Iterate through each IP and fetch location details
