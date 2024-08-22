@@ -23,11 +23,12 @@ awk.on("close", (code) => {
   }
 
   try {
-    const output = JSON.stringify(outputData, null, 2);
-    console.log("Raw JSON Output:", output);
-    outputData = outputData.replace(/,\s*\]$/, "]");
-    const jsonData = JSON.parse(outputData);
-    console.log("Parsed JSON Output:", JSON.stringify(jsonData, null, 2));
+    // Clean the output string
+    outputData = outputData.replace(/,\s*\]$/, "]"); // Remove the trailing comma
+    console.log("Raw JSON Output:", outputData); // Log the raw output
+
+    const jsonData = JSON.parse(outputData); // Parse the cleaned JSON string
+    console.log("Parsed JSON Output:", JSON.stringify(jsonData, null, 2)); // Log formatted JSON
   } catch (error) {
     console.error("Failed to parse JSON data:", error);
     console.log("Raw Output:\n", outputData);
