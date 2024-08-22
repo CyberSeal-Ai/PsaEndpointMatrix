@@ -12,7 +12,7 @@ awk.stdout.pipe(sed.stdin);
 
 sed.stdout.on("data", async (data) => {
   console.log("Raw JSON Output:\n", data.toString());
-  console.log(data)
+  // console.log(data)
   const jsonData = data
 
   // Iterate through each IP and fetch location details
@@ -20,7 +20,7 @@ sed.stdout.on("data", async (data) => {
     try {
       const locationData = await getPublicIpAndVpnInfo(item.ip);
       item.location = locationData;
-      console.log(`IP: ${item.ip}, Location: ${JSON.stringify(locationData)}`);
+      // console.log(`IP: ${item.ip}, Location: ${JSON.stringify(locationData)}`);
       
     } catch (error) {
       console.error(`Error fetching data for IP: ${item.ip}`, error);
