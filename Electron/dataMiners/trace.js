@@ -29,11 +29,6 @@ awk.on("close", (code) => {
     
     // const jsonData = JSON.parse(outputData); // Parse the cleaned JSON string
     console.log("Parsed JSON Output:", JSON.stringify(outputData, null, 2)); // Log formatted JSON
-    jsonData = JSON.stringify(outputData, null, 2);
-    for (const hop of jsonData) {
-      console.log(`Hop ${hop.hop_number}: ${hop.ip}`);
-    }
-
   } catch (error) {
     console.error("Failed to parse JSON data:", error);
     console.log("Raw Output:\n", outputData);
