@@ -22,7 +22,7 @@ function extractIpAddress(address) {
   return match ? match[0] : null;
 }
 
-function executeTracert(command, protocol) {
+function executeTraceroute(command) {
   return new Promise((resolve, reject) => {
     exec(command, async (err, stdout, stderr) => {
       if (err) {
@@ -38,18 +38,16 @@ function executeTracert(command, protocol) {
         totalHops: 0,
       };
 
-      const destMatch = lines[0].match(/Tracing route to\s+(.*)\s+\[(.*)\]/);
+      const destMatch = lines[0].match(/traceroute to\s+(.*)\s+\((.*)\)/);
       if (destMatch) {
         result.target = destMatch[1];
         result.destination = destMatch[2];
       }
 
       const hopRegex =
-        protocol === "ipv6"
-          ? /^(\d+)\s+([\d*]+)\s+ms\s+([\d*]+)\s+ms\s+([\d*]+)\s+ms\s+([a-fA-F0-9:]+.*)$/
-          : /^(\d+)\s+([\d*]+)\s+ms\s+([\d*]+)\s+ms\s+([\d*]+)\s+ms\s+(.*)$/;
+        /^(\d+)\s+(\S+)\s+(\d+\.\d+)\s+ms\s+(\d+\.\d+)\s+ms\s+(\d+\.\d+)\s+ms$/;
 
-      for (const line of lines.slice(2)) {
+      for (const line of lines.slice(1)) {
         const hopMatch = line.trim().match(hopRegex);
 
         result.totalHops++;
@@ -58,11 +56,11 @@ function executeTracert(command, protocol) {
           const hopDetail = {
             hop: parseInt(hopMatch[1], 10),
             times: [
-              hopMatch[2] === "*" ? null : parseInt(hopMatch[2], 10),
-              hopMatch[3] === "*" ? null : parseInt(hopMatch[3], 10),
-              hopMatch[4] === "*" ? null : parseInt(hopMatch[4], 10),
+              parseFloat(hopMatch[3]),
+              parseFloat(hopMatch[4]),
+              parseFloat(hopMatch[5]),
             ],
-            address: hopMatch[5],
+            address: hopMatch[2],
           };
 
           const ipAddress = extractIpAddress(hopDetail.address);
@@ -94,17 +92,15 @@ async function handleTraceData() {
   try {
     let result;
     try {
-      result = await executeTracert(
-        "tracert -6 worldaz.tr.teams.microsoft.com",
-        "ipv6"
+      result = await executeTraceroute(
+        "traceroute worldaz.tr.teams.microsoft.com"
       );
     } catch (err) {
-      console.error("IPv6 tracert failed, falling back to IPv4:", err);
-      result = await executeTracert(
-        "tracert -4 worldaz.tr.teams.microsoft.com",
-        "ipv4"
-      );
+      console.error("Traceroute failed:", err);
+      return null;
     }
+
+    console.log("Traceroute result:", result);
     return result;
   } catch (ex) {
     console.log("Exception:", ex);
