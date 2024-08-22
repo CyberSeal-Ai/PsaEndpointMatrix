@@ -26,9 +26,14 @@ awk.on("close", (code) => {
     // Clean the output string
     outputData = outputData.replace(/,\s*\]$/, "]"); // Remove the trailing comma
     console.log("Raw JSON Output:", outputData); // Log the raw output
-
+    
     // const jsonData = JSON.parse(outputData); // Parse the cleaned JSON string
     console.log("Parsed JSON Output:", JSON.stringify(outputData, null, 2)); // Log formatted JSON
+    jsonData = JSON.stringify(outputData, null, 2);
+    for (const hop of jsonData) {
+      console.log(`Hop ${hop.hop_number}: ${hop.ip}`);
+    }
+
   } catch (error) {
     console.error("Failed to parse JSON data:", error);
     console.log("Raw Output:\n", outputData);
