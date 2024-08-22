@@ -1,18 +1,18 @@
 const { spawn } = require("child_process");
 
-const traceroute = spawn("traceroute", ["-m", "30", "-n", "google.com"]);
+const traceroute = spawn("traceroute", ["-m", "30", "-n", ""]);
 const awk = spawn("awk", [
   'BEGIN {print "["}; NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "{ \\"hop_number\\": %d, \\"ip\\": \\"%s\\" },\\n", NR-1, $2}; END {print "]"}',
 ]);
 const sed = spawn("sed", ["$s/,$//"]);
 
+let outputData = "";
+
 traceroute.stdout.pipe(awk.stdin);
 awk.stdout.pipe(sed.stdin);
 
 sed.stdout.on("data", (data) => {
-  console.log(`Output:\n${data}`);
-  jsonData = JSON.parse(data);
-  console.log(jsonData);
+  outputData += data.toString();
 });
 
 sed.stderr.on("data", (data) => {
@@ -22,5 +22,14 @@ sed.stderr.on("data", (data) => {
 sed.on("close", (code) => {
   if (code !== 0) {
     console.error(`Process exited with code ${code}`);
+    return;
+  }
+
+  try {
+    const jsonData = JSON.parse(outputData);
+    console.log("Parsed JSON Output:", jsonData);
+  } catch (error) {
+    console.error("Failed to parse JSON data:", error);
+    console.log("Raw Output:\n", outputData);
   }
 });
