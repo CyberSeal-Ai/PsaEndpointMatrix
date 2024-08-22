@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 
 const traceroute = spawn("traceroute", ["-m", "30", "-n", "google.com"]);
 const awk = spawn("awk", [
-  'BEGIN {print "["}; NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "{ \\"hop_number\\": %d, \\"ip\\": \\"%s\\" },\n", NR-1, $2}; END {print "]"}',
+  'BEGIN {print "["}; NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "{ \\"hop_number\\": %d, \\"ip\\": \\"%s\\" },\\n", NR-1, $2}; END {print "]"}',
 ]);
 
 let outputData = "";
@@ -24,12 +24,13 @@ awk.on("close", (code) => {
 
   try {
     // Clean up the output: remove trailing commas and extra newlines
-    outputData = outputData.replace(/,\s*\n\s*\]$/, "\n]");
-
-    // Parse the cleaned data
-    const jsonData = JSON.parse(outputData);
-
+    const output = JSON.stringify(outputData, null, 2);
+    console.log("Raw JSON Output:", output);
+    outputDataCorrected = output.replace(/,\s*]$/, ']');
+    const jsonData = JSON.parse(outputDataCorrected);
     console.log("Parsed JSON Output:", JSON.stringify(jsonData, null, 2));
+
+    // console.log("Parsed JSON Output:", JSON.stringify(jsonData, null, 2));
   } catch (error) {
     console.error("Failed to parse JSON data:", error);
     console.log("Raw Output:\n", outputData);
