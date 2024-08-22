@@ -94,7 +94,7 @@ async function handleTraceData() {
     try {
       console.log("Executing traceroute...");
       result = await executeTraceroute(
-        "traceroute worldaz.tr.teams.microsoft.com"
+        "traceroute -m 30 worldaz.tr.teams.microsoft.com"
       );
     } catch (err) {
       console.error("Traceroute failed:", err);
