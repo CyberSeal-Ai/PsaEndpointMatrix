@@ -11,10 +11,8 @@ awk.stdout.pipe(sed.stdin);
 
 sed.stdout.on("data", (data) => {
   console.log(`Output:\n${data}`);
-
-  console.log("Analyzing hops...");
-
-  console.log(data)
+  jsonData = JSON.parse(data);
+  console.log(jsonData);
 });
 
 sed.stderr.on("data", (data) => {
