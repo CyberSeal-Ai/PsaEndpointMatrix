@@ -1,6 +1,6 @@
 const { spawn } = require("child_process");
 
-const traceroute = spawn("traceroute", ["-m", "30", "-n", ""]);
+const traceroute = spawn("traceroute", ["-m", "30", "-n", "google.com"]);
 const awk = spawn("awk", [
   'BEGIN {print "["}; NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "{ \\"hop_number\\": %d, \\"ip\\": \\"%s\\" },\\n", NR-1, $2}; END {print "]"}',
 ]);
