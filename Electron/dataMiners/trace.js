@@ -26,6 +26,9 @@ awk.on("close", (code) => {
     // Clean the output string
     console.log("Raw Output:", outputData);
     console.log(typeof outputData);
+    outputData = outputData.slice(0,-2); // Remove the trailing comma and newlin
+    outputData = outputData + "]"
+    console.log("Raw Output:", outputData);
     outputData = JSON.stringify(outputData, null, 2); 
     console.log("Cleaned Output:", outputData);
     console.log(typeof outputData);
