@@ -2,7 +2,7 @@ const { spawn } = require("child_process");
 
 const traceroute = spawn("traceroute", ["-m", "30", "-n", "google.com"]);
 const awk = spawn("awk", [
-  'NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "Hop %d: %s\\n", NR-1, $2}',
+  'NR>1 {if ($2 ~ /^[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+$/) printf "%d|%s\\n", NR-1, $2}',
 ]);
 
 let outputData = "";
@@ -24,5 +24,5 @@ awk.on("close", (code) => {
   }
 
   // Output the string result
-  console.log("Traceroute Result:\n", outputData);
+  console.log("Traceroute Data:\n", outputData);
 });
