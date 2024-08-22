@@ -92,6 +92,7 @@ async function handleTraceData() {
   try {
     let result;
     try {
+      console.log("Executing traceroute...");
       result = await executeTraceroute(
         "traceroute worldaz.tr.teams.microsoft.com"
       );
