@@ -7,24 +7,13 @@ const traceroute = spawn("traceroute", ["-m", "30", "-n", target]);
 let outputData = "";
 let destinationInfo = {};
 
-// Capture the destination name and IP from the initial traceroute output
+// Capture the destination name and IP from either stdout or stderr
 traceroute.stdout.on("data", (data) => {
-  const lines = data.toString().split("\n");
-  lines.forEach((line, index) => {
-    if (index === 0 && line.startsWith("traceroute to")) {
-      const match = line.match(/traceroute to (.+) \((.+)\)/);
-      if (match) {
-        destinationInfo.target = match[1];
-        destinationInfo.destination = match[2];
-      }
-    } else {
-      outputData += line + "\n";
-    }
-  });
+  parseTracerouteData(data.toString());
 });
 
 traceroute.stderr.on("data", (data) => {
-  console.error(`stderr: ${data}`);
+  parseTracerouteData(data.toString());
 });
 
 traceroute.on("close", async (code) => {
@@ -76,6 +65,22 @@ traceroute.on("close", async (code) => {
     console.log("Raw Output:\n", outputData);
   }
 });
+
+// Function to parse traceroute data and extract destination info
+function parseTracerouteData(data) {
+  const lines = data.split("\n");
+  lines.forEach((line, index) => {
+    if (line.startsWith("traceroute to")) {
+      const match = line.match(/traceroute to (.+) \((.+)\)/);
+      if (match) {
+        destinationInfo.target = match[1];
+        destinationInfo.destination = match[2];
+      }
+    } else {
+      outputData += line + "\n";
+    }
+  });
+}
 
 // Function to fetch IP location and VPN info
 async function getPublicIpAndVpnInfo(ipAddress) {
