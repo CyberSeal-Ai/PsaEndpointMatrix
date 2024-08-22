@@ -61,6 +61,7 @@ async function handleTraceData() {
         };
 
         // Resolve with the final JSON result
+        console.log("Final Result:", finalResult);
         resolve(finalResult);
       } catch (error) {
         reject(`Error processing traceroute data: ${error}`);
