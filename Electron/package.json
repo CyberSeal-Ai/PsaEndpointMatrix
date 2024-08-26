@@ -10,62 +10,10 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder",
+    "build": "electron-packager . Endpoint-Metrics-Ezaix --platform=darwin --arch=x64 --out=release-builds --overwrite",
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux"
-  },
-  "build": {
-    "appId": "com.v2.1.4ezaix.endpointmetrics",
-    "productName": "Endpoint-Metrics-Ezaix V2.1.4",
-    "directories": {
-      "output": "release-builds-6-mac"
-    },
-    "files": [
-      "build/**/*",
-      "main.js",
-      "preload.js",
-      "package.json",
-      "icons/**/*",
-      "dataMiners/**/*",
-      "ipcHandlers/**/*",
-      "node_modules/**/*"
-    ],
-    "win": {
-      "icon": "./Icons/Modified.ico"
-    },
-    "mac": {
-      "icon": "./Icons/mac.icns",
-      "category": "public.app-category.utilities",
-      "target": [
-        "dmg",
-        "zip"
-      ],
-      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
-    },
-    "dmg": {
-      "icon": "./Icons/mac.icns",
-      "iconSize": 100,
-      "contents": [
-        {
-          "x": 130,
-          "y": 220
-        },
-        {
-          "x": 410,
-          "y": 220,
-          "type": "link",
-          "path": "/Applications"
-        }
-      ],
-      "window": {
-        "width": 540,
-        "height": 380
-      }
-    },
-    "linux": {
-      "icon": "./Icons/Modified.png"
-    }
   },
   "dependencies": {
     "axios": "^1.6.7",
@@ -83,6 +31,7 @@
   },
   "devDependencies": {
     "electron": "^28.2.2",
-    "electron-builder": "^24.13.3"
+    "electron-builder": "^24.13.3",
+    "electron-packager": "^17.1.1"
   }
 }
