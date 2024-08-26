@@ -19,7 +19,7 @@
     "appId": "com.v2.1.4ezaix.endpointmetrics",
     "productName": "Endpoint-Metrics-Ezaix V2.1.4",
     "directories": {
-      "output": "release-builds-6-mac"
+      "output": "release-builds-7-mac"
     },
     "files": [
       "build/**/*",
@@ -38,10 +38,13 @@
       "icon": "./Icons/mac.icns",
       "category": "public.app-category.utilities",
       "target": [
-        "dmg",
-        "zip"
+        {
+          "target": "dmg",
+          "arch": ["x64"]
+        }
       ],
-      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}"
+      "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+      "compression": "maximum"
     },
     "dmg": {
       "icon": "./Icons/mac.icns",
